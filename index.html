@@ -1,74 +1,83 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Career Craft Consultancy | CCC is here</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            maxWidth: {
-              container: "1280px",
-            },
-            animation: {
-              marquee: 'marquee var(--duration) linear infinite',
-              blink: 'blink 0.8s infinite',
-            },
-            keyframes: {
-              marquee: {
-                from: { transform: 'translateX(0)' },
-                to: { transform: 'translateX(calc(-100% - var(--gap)))' }
-              },
-              blink: {
-                '0%, 100%': { opacity: 1 },
-                '50%': { opacity: 0 },
-              }
-            }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <title>Career Craft Consultancy | CCC is here</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          maxWidth: {
+            container: "1280px",
           },
+          animation: {
+            marquee: 'marquee var(--duration) linear infinite',
+            blink: 'blink 0.8s infinite',
+          },
+          keyframes: {
+            marquee: {
+              from: { transform: 'translateX(0)' },
+              to: { transform: 'translateX(calc(-100% - var(--gap)))' }
+            },
+            blink: {
+              '0%, 100%': { opacity: 1 },
+              '50%': { opacity: 0 },
+            }
+          }
         },
-      }
-    </script>
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            scroll-behavior: smooth;
-        }
-        .gradient-text {
-            background: linear-gradient(135deg, #4285F4 0%, #1a56db 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .soft-shadow {
-            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.08);
-        }
-        /* Modern Text Depth System */
-        .text-depth-hero {
-            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
-        }
-        .text-depth-heading {
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        }
-        .text-depth-subheading {
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
-        }
-        .text-depth-callout {
-            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.03);
-        }
-        .text-depth-button {
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
-        }
-        
-        .hero-gradient {
-            background: radial-gradient(circle at top center, rgba(66, 133, 244, 0.06) 0%, transparent 70%);
-        }
-    </style>
-<script type="importmap">
+      },
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      scroll-behavior: smooth;
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #4285F4 0%, #1a56db 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .soft-shadow {
+      box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Modern Text Depth System */
+    .text-depth-hero {
+      text-shadow: 0 4px 8px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .text-depth-heading {
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .text-depth-subheading {
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    }
+
+    .text-depth-callout {
+      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.03);
+    }
+
+    .text-depth-button {
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+    }
+
+    .hero-gradient {
+      background: radial-gradient(circle at top center, rgba(66, 133, 244, 0.06) 0%, transparent 70%);
+    }
+  </style>
+  <script type="importmap">
 {
   "imports": {
     "react": "https://esm.sh/react@19.0.0",
@@ -84,10 +93,12 @@
   }
 }
 </script>
-<link rel="stylesheet" href="/index.css">
+  <link rel="stylesheet" href="/index.css">
 </head>
+
 <body class="bg-[#fcfcfc] text-[#1a1a1a] antialiased">
-    <div id="root"></div>
-<script type="module" src="/index.tsx"></script>
+  <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
 </body>
+
 </html>
