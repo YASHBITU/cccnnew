@@ -22,14 +22,14 @@ export const Pricing: React.FC = () => {
           <div className="absolute top-0 right-0 bg-indigo-600 text-white text-[10px] uppercase font-black px-8 py-1 tracking-widest rotate-45 translate-x-[25%] translate-y-[100%]">
             Limited Slots
           </div>
-          
+
           <div className="mb-10">
             <h3 className="text-2xl font-bold text-slate-900 mb-2">Job Hunt Kickstart</h3>
             <p className="text-gray-500 text-sm">A complete system for early professionals.</p>
           </div>
 
           <div className="flex items-baseline gap-2 mb-10">
-            <span className="text-5xl font-black text-slate-900">₹4,999</span>
+            <span className="text-5xl font-black text-slate-900">₹999</span>
             <span className="text-gray-400 text-sm font-medium">one-time investment</span>
           </div>
 
@@ -44,10 +44,13 @@ export const Pricing: React.FC = () => {
             ))}
           </ul>
 
-          <button className="w-full bg-black text-white py-5 rounded-2xl font-bold text-lg hover:bg-gray-800 transition-all shadow-xl shadow-gray-200 active:scale-95">
+          <button
+            onClick={() => window.open('https://rzp.io/rzp/L3WYf37s', '_blank')}
+            className="w-full bg-black text-white py-5 rounded-2xl font-bold text-lg hover:bg-gray-800 transition-all shadow-xl shadow-gray-200 active:scale-95"
+          >
             Get Started
           </button>
-          
+
           <p className="text-center mt-6 text-xs text-gray-400 font-medium">
             Secure payment processing via Razorpay
           </p>

@@ -58,7 +58,7 @@ const CountdownTimer: React.FC = () => {
 
 export const PricingPage: React.FC = () => {
   const handleEnrollClick = () => {
-    window.open('https://pages.razorpay.com/pl_RscCDeL6yNVKaH/view', '_blank');
+    window.open('https://rzp.io/rzp/L3WYf37s', '_blank');
   };
 
   return (
@@ -83,10 +83,10 @@ export const PricingPage: React.FC = () => {
             <div className="flex flex-col mb-8 relative z-10">
               <div className="flex items-center gap-3 mb-2">
                 <span className="text-base md:text-lg text-gray-400 line-through font-bold">₹4,999.00</span>
-                <span className="bg-[#4285F4]/10 text-[#4285F4] text-[9px] md:text-[10px] font-black px-2 py-1 rounded text-depth-callout">SAVE 86%</span>
+                <span className="bg-[#4285F4]/10 text-[#4285F4] text-[9px] md:text-[10px] font-black px-2 py-1 rounded text-depth-callout">SAVE 80%</span>
               </div>
               <div className="flex items-baseline gap-2 md:gap-3">
-                <span className="text-5xl md:text-7xl font-black text-slate-950 text-depth-heading tracking-tighter">₹699</span>
+                <span className="text-5xl md:text-7xl font-black text-slate-950 text-depth-heading tracking-tighter">₹999</span>
                 <span className="text-gray-400 font-bold uppercase tracking-widest text-[10px] md:text-xs">One-Time Payment</span>
               </div>
             </div>
@@ -113,7 +113,7 @@ export const PricingPage: React.FC = () => {
               ))}
             </div>
 
-            <button 
+            <button
               onClick={handleEnrollClick}
               className="w-full bg-[#4285F4] text-white py-5 md:py-6 rounded-[1.5rem] md:rounded-3xl font-black text-lg md:text-xl hover:bg-[#3b78e7] transition-all shadow-xl shadow-[#4285F4]/20 active:scale-95 uppercase tracking-widest text-depth-button relative z-10"
             >
@@ -121,19 +121,19 @@ export const PricingPage: React.FC = () => {
             </button>
 
             {/* Premium Animated Money-Back Guarantee Section */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              whileHover={{ 
-                scale: 1.02, 
+              whileHover={{
+                scale: 1.02,
                 backgroundColor: 'rgba(16, 185, 129, 0.05)',
                 borderColor: 'rgba(16, 185, 129, 0.2)'
               }}
               className="mt-8 md:mt-12 p-6 md:p-8 bg-gray-50/50 rounded-2xl md:rounded-[2.5rem] border border-gray-100 text-center relative overflow-hidden group transition-all duration-500 shadow-sm"
             >
               {/* Premium "Sweep" Reflection Effect */}
-              <motion.div 
+              <motion.div
                 animate={{ x: ["-100%", "200%"] }}
                 transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", repeatDelay: 4 }}
                 className="absolute inset-0 w-1/3 h-[200%] bg-gradient-to-r from-transparent via-white/40 to-transparent pointer-events-none -skew-x-12 z-20"
@@ -142,20 +142,20 @@ export const PricingPage: React.FC = () => {
 
               {/* Glowing Background Pulse */}
               <div className="absolute inset-0 bg-emerald-500/0 group-hover:bg-emerald-500/[0.02] transition-colors duration-700" />
-              
+
               <div className="flex items-center justify-center gap-3 mb-3 relative z-10">
                 <p className="text-slate-800 font-black text-sm md:text-lg tracking-tight text-depth-subheading">
                   15-Day Money-Back Guarantee
                 </p>
-                
+
                 {/* Verified Premium Green Tick Container */}
                 <div className="relative">
-                   <motion.div 
-                     animate={{ scale: [1, 1.4, 1], opacity: [0.5, 0, 0.5] }}
-                     transition={{ duration: 2, repeat: Infinity }}
-                     className="absolute inset-0 rounded-full border border-emerald-500/30 -z-10"
-                   />
-                   <div className="flex items-center justify-center bg-emerald-500 p-1.5 rounded-full shadow-[0_0_20px_rgba(16,185,129,0.4)] border border-white/20 group-hover:scale-110 transition-transform duration-500">
+                  <motion.div
+                    animate={{ scale: [1, 1.4, 1], opacity: [0.5, 0, 0.5] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                    className="absolute inset-0 rounded-full border border-emerald-500/30 -z-10"
+                  />
+                  <div className="flex items-center justify-center bg-emerald-500 p-1.5 rounded-full shadow-[0_0_20px_rgba(16,185,129,0.4)] border border-white/20 group-hover:scale-110 transition-transform duration-500">
                     <ShieldCheck size={16} className="text-white" strokeWidth={3} />
                   </div>
                 </div>

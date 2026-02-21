@@ -8,74 +8,59 @@ export const About: React.FC = () => {
   const keyPoints = [
     {
       icon: Users,
-      title: "500+ Careers Guided",
-      desc: "Helping students move confidently toward job readiness.",
-      color: "text-blue-500",
-      bg: "bg-blue-50"
+      stat: "500+",
+      label: "Careers Guided",
+      color: "text-[#4285F4]"
     },
     {
       icon: UserCheck,
-      title: "Dedicated 1:1 Consulting",
-      desc: "Focused guidance for resumes, profiles, and job strategy.",
-      color: "text-emerald-500",
-      bg: "bg-emerald-50"
+      stat: "1:1",
+      label: "Dedicated Consulting",
+      color: "text-[#FABB05]"
     },
     {
       icon: MessageSquare,
-      title: "Always-On Support",
-      desc: "Chat and call support for real-time problem solving.",
-      color: "text-amber-500",
-      bg: "bg-amber-50"
+      stat: "24/7",
+      label: "Always-On Support",
+      color: "text-[#9333EA]"
     },
     {
       icon: HardDrive,
-      title: "Drive Access for life time",
-      desc: "Session recording will be available on drive for life long.",
-      color: "text-purple-500",
-      bg: "bg-purple-50"
+      stat: "Lifetime",
+      label: "Drive Access",
+      color: "text-[#34A853]"
     }
   ];
 
   return (
     <div className="pt-32 pb-24 md:pt-48 md:pb-40 animate-in fade-in duration-700">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="max-w-4xl mb-20 md:mb-32">
-          <h1 className="text-5xl md:text-8xl font-black tracking-tight text-slate-950 mb-10 leading-[0.9] text-depth-hero">
+        <div className="max-w-4xl mb-16 md:mb-24">
+          <h1 className="text-4xl md:text-6xl font-black tracking-tight text-slate-950 mb-6 leading-tight text-depth-hero">
             We’re your job hunt partner — <span className="text-[#4285F4]">not a course.</span>
           </h1>
-          <p className="text-xl md:text-2xl text-gray-500 font-medium leading-relaxed text-depth-subheading">
+          <p className="text-lg md:text-xl text-gray-500 font-medium leading-relaxed text-depth-subheading">
             Career Craft Consultancy was built for students and freshers stuck in the “apply more” trap. We don’t sell motivation. We build strategy, execution, and results.
           </p>
         </div>
 
-        {/* 4-card Key Service Points with WhatsApp buttons */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-32">
+        {/* 4-card Key Service Points */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="bg-white border border-slate-100 rounded-2xl shadow-sm px-6 py-10 mb-24 flex flex-col md:flex-row justify-between items-center divide-y md:divide-y-0 md:divide-x divide-slate-100"
+        >
           {keyPoints.map((point, i) => (
-            <motion.div 
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className="p-8 bg-white border border-slate-100 rounded-[2.5rem] hover:border-[#4285F4]/30 transition-all soft-shadow group flex flex-col"
-            >
-              <div className={cn("w-14 h-14 rounded-2xl flex items-center justify-center mb-8 transition-transform group-hover:scale-110", point.bg)}>
-                <point.icon size={28} className={point.color} />
+            <div key={i} className="flex-1 py-6 md:py-0 px-4 w-full md:w-auto text-center hover:-translate-y-2 transition-transform duration-300">
+              <div className="flex justify-center mb-4">
+                <point.icon size={30} className={point.color} strokeWidth={1.5} />
               </div>
-              <h3 className="text-xl md:text-2xl font-black text-slate-950 mb-4 tracking-tight leading-tight">{point.title}</h3>
-              <p className="text-slate-500 font-medium text-sm md:text-base leading-relaxed mb-8 flex-grow">{point.desc}</p>
-              
-              <a 
-                href="https://wa.me/919850103088" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-[#4285F4] font-black text-[10px] uppercase tracking-widest hover:translate-x-1 transition-transform"
-              >
-                Learn More <MessageCircle size={14} className="fill-[#4285F4]/10" />
-              </a>
-            </motion.div>
+              <h3 className="text-2xl md:text-3xl font-black text-slate-900 mb-2 tracking-tight">{point.stat}</h3>
+              <p className="text-xs md:text-sm font-medium text-slate-500">{point.label}</p>
+            </div>
           ))}
-        </div>
+        </motion.div>
 
         <div className="grid md:grid-cols-2 gap-24 items-start border-t border-slate-100 pt-32">
           <div>

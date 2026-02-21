@@ -108,30 +108,42 @@ export const Home: React.FC<{ onNavigate: (p: string) => void }> = ({ onNavigate
           <div className="inline-block px-4 py-1.5 mb-8 rounded-full border border-gray-100 bg-white text-[10px] font-bold tracking-[0.2em] uppercase text-gray-400 text-depth-callout">
             Engineered for Results
           </div>
-          
+
           <h1 className="text-5xl md:text-8xl lg:text-9xl font-black tracking-tight text-slate-950 mb-8 max-w-5xl mx-auto leading-[0.9] text-depth-hero">
             Not getting interview calls? <br />
             <span className="text-[#4285F4]">CCC is here.</span>
           </h1>
-          
+
           <p className="text-lg md:text-xl text-gray-500 max-w-2xl mx-auto mb-12 leading-relaxed font-medium text-depth-subheading">
             CCC helps freshers stop applying blindly and start getting real interview calls — with a proven, mentor-led system designed for high-conversion.
           </p>
-          
+
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button 
+            <button
               onClick={() => onNavigate('pricing')}
               className="w-full sm:w-auto bg-[#4285F4] text-white px-10 py-5 rounded-2xl font-bold text-lg hover:bg-[#3b78e7] transition-all shadow-2xl shadow-[#4285F4]/20 active:scale-95 text-depth-button"
             >
               Get Interview Calls
             </button>
-            <button 
+            <button
               onClick={() => onNavigate('services')}
               className="w-full sm:w-auto bg-white text-slate-900 border border-slate-200 px-10 py-5 rounded-2xl font-bold text-lg hover:border-slate-400 transition-all active:scale-95 soft-shadow text-depth-callout"
             >
               See How It Works
             </button>
           </div>
+        </div>
+      </section>
+
+      {/* Companies Section */}
+      <section className="py-12 md:py-16 border-y border-slate-100 bg-white shadow-sm relative z-10">
+        <div className="max-w-7xl mx-auto px-6 text-center mb-8">
+          <p className="text-xs md:text-sm font-black text-slate-400 uppercase tracking-[0.2em]">Our students are getting placed at</p>
+        </div>
+        <div className="opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500">
+          <TextMarquee baseVelocity={-1} clasname="text-slate-800 font-black tracking-tighter text-3xl md:text-5xl lg:text-6xl">
+            TCS • Wipro • Persistent • Orion Innovation • Cognizant • Tech Mahindra • Capgemini • Infosys • Zensar • Hexaware •
+          </TextMarquee>
         </div>
       </section>
 
@@ -151,7 +163,7 @@ export const Home: React.FC<{ onNavigate: (p: string) => void }> = ({ onNavigate
                 That’s exactly what we fix.
               </div>
             </div>
-            
+
             <div className="grid gap-4 md:gap-6">
               {[
                 "You apply daily. Nobody replies.",
@@ -188,7 +200,7 @@ export const Home: React.FC<{ onNavigate: (p: string) => void }> = ({ onNavigate
         {/* PC/Laptop View - TestimonialStack */}
         <div className="hidden lg:block">
           <div className="max-w-7xl mx-auto px-6 text-center mb-16 pt-32">
-             <h2 className="text-3xl md:text-5xl lg:text-7xl font-black tracking-tighter text-depth-heading">Student Success Stories</h2>
+            <h2 className="text-3xl md:text-5xl lg:text-7xl font-black tracking-tighter text-depth-heading">Student Success Stories</h2>
           </div>
           <div className="h-[700px] mb-32">
             <TestimonialStack testimonials={cccTestimonials} />
@@ -197,7 +209,7 @@ export const Home: React.FC<{ onNavigate: (p: string) => void }> = ({ onNavigate
 
         {/* Mobile/Tablet View - Slider Testimonials */}
         <div className="lg:hidden">
-          <TestimonialsSection 
+          <TestimonialsSection
             title="Student Success Stories"
             description="Real stories from graduates who leveraged the CCC system to land high-impact calls."
             testimonials={marqueeTestimonials}
@@ -210,13 +222,13 @@ export const Home: React.FC<{ onNavigate: (p: string) => void }> = ({ onNavigate
         <div className="max-w-7xl mx-auto px-6">
           <div className="max-w-4xl mx-auto bg-[#4285F4]/5 border border-[#4285F4]/10 rounded-[3rem] p-10 md:p-24 text-center soft-shadow relative overflow-hidden">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-[#4285F4]/10 blur-[100px] rounded-full" />
-            
+
             <h2 className="text-4xl md:text-5xl font-black text-slate-950 mb-8 tracking-tighter text-depth-heading">We don’t guess. We guarantee.</h2>
             <div className="text-lg md:text-2xl text-slate-600 font-medium mb-12 space-y-4">
               <p className="text-depth-subheading">Follow our system properly.</p>
               <p className="text-[#4285F4] font-black text-depth-subheading uppercase italic tracking-tight">If you don’t receive at least one interview call within 15 days, we refund your money.</p>
             </div>
-            <button 
+            <button
               onClick={() => onNavigate('pricing')}
               className="bg-black text-white px-12 py-5 rounded-2xl font-black text-xl hover:bg-[#4285F4] transition-all active:scale-95 shadow-2xl text-depth-button uppercase tracking-widest"
             >
