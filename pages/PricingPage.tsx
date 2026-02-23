@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ShieldCheck, Sparkles, Timer } from 'lucide-react';
 
-const CountdownTimer: React.FC = () => {
+const CountdownTimer: React.FC<{ country: string | null }> = ({ country }) => {
   const [timeLeft, setTimeLeft] = useState({
     hours: '00',
     minutes: '00',
@@ -13,26 +13,56 @@ const CountdownTimer: React.FC = () => {
   useEffect(() => {
     const calculateTimeLeft = () => {
       const now = new Date();
-      const midnight = new Date();
-      midnight.setHours(24, 0, 0, 0);
+      const timeZone = country === 'AU' ? 'Australia/Sydney' : 'Asia/Kolkata';
 
-      const diff = midnight.getTime() - now.getTime();
+      try {
+        const formatter = new Intl.DateTimeFormat('en-US', {
+          timeZone,
+          hour: 'numeric',
+          minute: 'numeric',
+          second: 'numeric',
+          hourCycle: 'h23'
+        });
 
-      const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
-      const m = Math.floor((diff / 1000 / 60) % 60);
-      const s = Math.floor((diff / 1000) % 60);
+        const parts = formatter.formatToParts(now);
+        let hour = 0, minute = 0, second = 0;
+        parts.forEach(p => {
+          if (p.type === 'hour') hour = parseInt(p.value, 10);
+          if (p.type === 'minute') minute = parseInt(p.value, 10);
+          if (p.type === 'second') second = parseInt(p.value, 10);
+        });
 
-      setTimeLeft({
-        hours: h.toString().padStart(2, '0'),
-        minutes: m.toString().padStart(2, '0'),
-        seconds: s.toString().padStart(2, '0')
-      });
+        const diffInSeconds = (24 * 3600) - (hour * 3600 + minute * 60 + second);
+
+        const h = Math.floor(diffInSeconds / 3600) % 24;
+        const m = Math.floor((diffInSeconds % 3600) / 60);
+        const s = diffInSeconds % 60;
+
+        setTimeLeft({
+          hours: h.toString().padStart(2, '0'),
+          minutes: m.toString().padStart(2, '0'),
+          seconds: s.toString().padStart(2, '0')
+        });
+      } catch (e) {
+        // Fallback to local time if Intl format fails
+        const midnight = new Date();
+        midnight.setHours(24, 0, 0, 0);
+        const diff = midnight.getTime() - now.getTime();
+        const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const m = Math.floor((diff / 1000 / 60) % 60);
+        const s = Math.floor((diff / 1000) % 60);
+        setTimeLeft({
+          hours: h.toString().padStart(2, '0'),
+          minutes: m.toString().padStart(2, '0'),
+          seconds: s.toString().padStart(2, '0')
+        });
+      }
     };
 
     calculateTimeLeft();
     const interval = setInterval(calculateTimeLeft, 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [country]);
 
   return (
     <div className="flex flex-col items-center gap-2 mb-8 animate-in fade-in slide-in-from-bottom-2 duration-1000">
@@ -112,7 +142,7 @@ export const PricingPage: React.FC = () => {
             </div>
 
             {/* Countdown Timer Component */}
-            <CountdownTimer />
+            <CountdownTimer country={country} />
 
             <div className="grid gap-4 md:gap-5 mb-10 md:mb-16 relative z-10">
               {[
