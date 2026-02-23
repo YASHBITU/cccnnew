@@ -58,7 +58,7 @@ const CountdownTimer: React.FC = () => {
 
 export const PricingPage: React.FC = () => {
   const handleEnrollClick = () => {
-    window.open('https://rzp.io/rzp/L3WYf37s', '_blank');
+    window.open('https://rzp.io/rzp/23u3EB8', '_blank');
   };
 
   return (
@@ -72,7 +72,7 @@ export const PricingPage: React.FC = () => {
         <div className="max-w-2xl mx-auto">
           <div className="bg-white border border-gray-200 rounded-[2.5rem] md:rounded-[3.5rem] p-8 md:p-20 shadow-2xl shadow-[#4285F4]/10 relative overflow-hidden soft-shadow">
             <div className="absolute top-8 right-[-45px] md:top-10 md:right-[-40px] bg-[#4285F4] text-white text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] py-2 px-12 rotate-45 shadow-lg z-20">
-              Limited Slots
+              Limited Time Offer
             </div>
 
             <div className="mb-8 md:mb-12 relative z-10">
@@ -82,11 +82,11 @@ export const PricingPage: React.FC = () => {
 
             <div className="flex flex-col mb-8 relative z-10">
               <div className="flex items-center gap-3 mb-2">
-                <span className="text-base md:text-lg text-gray-400 line-through font-bold">₹4,999.00</span>
+                <span className="text-base md:text-lg text-gray-400 line-through font-bold">500 AUD</span>
                 <span className="bg-[#4285F4]/10 text-[#4285F4] text-[9px] md:text-[10px] font-black px-2 py-1 rounded text-depth-callout">SAVE 80%</span>
               </div>
               <div className="flex items-baseline gap-2 md:gap-3">
-                <span className="text-5xl md:text-7xl font-black text-slate-950 text-depth-heading tracking-tighter">₹999</span>
+                <span className="text-5xl md:text-7xl font-black text-slate-950 text-depth-heading tracking-tighter">99 AUD</span>
                 <span className="text-gray-400 font-bold uppercase tracking-widest text-[10px] md:text-xs">One-Time Payment</span>
               </div>
             </div>

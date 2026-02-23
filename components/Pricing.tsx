@@ -20,7 +20,7 @@ export const Pricing: React.FC = () => {
 
         <div className="w-full max-w-xl bg-white border border-gray-200 rounded-[3rem] p-10 md:p-16 shadow-2xl shadow-gray-200/50 relative overflow-hidden">
           <div className="absolute top-0 right-0 bg-indigo-600 text-white text-[10px] uppercase font-black px-8 py-1 tracking-widest rotate-45 translate-x-[25%] translate-y-[100%]">
-            Limited Slots
+            Limited Time Offer
           </div>
 
           <div className="mb-10">
@@ -28,9 +28,15 @@ export const Pricing: React.FC = () => {
             <p className="text-gray-500 text-sm">A complete system for early professionals.</p>
           </div>
 
-          <div className="flex items-baseline gap-2 mb-10">
-            <span className="text-5xl font-black text-slate-900">₹999</span>
-            <span className="text-gray-400 text-sm font-medium">one-time investment</span>
+          <div className="flex flex-col mb-10">
+            <div className="flex items-center gap-3 mb-2">
+              <span className="text-base text-gray-400 line-through font-bold">500 AUD</span>
+              <span className="bg-indigo-100 text-indigo-700 text-[10px] font-black px-2 py-1 rounded">SAVE 80%</span>
+            </div>
+            <div className="flex items-baseline gap-2">
+              <span className="text-5xl font-black text-slate-900">99 AUD</span>
+              <span className="text-gray-400 text-sm font-medium">one-time investment</span>
+            </div>
           </div>
 
           <ul className="space-y-5 mb-12">
@@ -45,7 +51,7 @@ export const Pricing: React.FC = () => {
           </ul>
 
           <button
-            onClick={() => window.open('https://rzp.io/rzp/L3WYf37s', '_blank')}
+            onClick={() => window.open('https://rzp.io/rzp/23u3EB8', '_blank')}
             className="w-full bg-black text-white py-5 rounded-2xl font-bold text-lg hover:bg-gray-800 transition-all shadow-xl shadow-gray-200 active:scale-95"
           >
             Get Started
