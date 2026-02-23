@@ -57,8 +57,22 @@ const CountdownTimer: React.FC = () => {
 };
 
 export const PricingPage: React.FC = () => {
+  const [country, setCountry] = useState<string>('IN');
+
+  useEffect(() => {
+    fetch('/api/geo')
+      .then(res => res.json())
+      .then(data => {
+        if (data.country) {
+          setCountry(data.country);
+        }
+      })
+      .catch(err => console.error("Error fetching geo:", err));
+  }, []);
+
   const handleEnrollClick = () => {
-    window.open('https://rzp.io/rzp/23u3EB8', '_blank');
+    const link = country === 'AU' ? 'https://rzp.io/rzp/23u3EB8' : 'https://rzp.io/rzp/L3WYf37s';
+    window.open(link, '_blank');
   };
 
   return (
@@ -82,11 +96,15 @@ export const PricingPage: React.FC = () => {
 
             <div className="flex flex-col mb-8 relative z-10">
               <div className="flex items-center gap-3 mb-2">
-                <span className="text-base md:text-lg text-gray-400 line-through font-bold">500 AUD</span>
+                <span className="text-base md:text-lg text-gray-400 line-through font-bold">
+                  {country === 'AU' ? '500 AUD' : '₹4,999.00'}
+                </span>
                 <span className="bg-[#4285F4]/10 text-[#4285F4] text-[9px] md:text-[10px] font-black px-2 py-1 rounded text-depth-callout">SAVE 80%</span>
               </div>
               <div className="flex items-baseline gap-2 md:gap-3">
-                <span className="text-5xl md:text-7xl font-black text-slate-950 text-depth-heading tracking-tighter">99 AUD</span>
+                <span className="text-5xl md:text-7xl font-black text-slate-950 text-depth-heading tracking-tighter">
+                  {country === 'AU' ? '99 AUD' : '₹999'}
+                </span>
                 <span className="text-gray-400 font-bold uppercase tracking-widest text-[10px] md:text-xs">One-Time Payment</span>
               </div>
             </div>
