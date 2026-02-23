@@ -2,17 +2,18 @@
 import React, { useState, useEffect } from 'react';
 
 export const Pricing: React.FC = () => {
-  const [country, setCountry] = useState<string>('IN');
+  const [country, setCountry] = useState<string | null>(null);
 
   useEffect(() => {
     fetch('/api/geo')
       .then(res => res.json())
       .then(data => {
-        if (data.country) {
-          setCountry(data.country);
-        }
+        setCountry(data.country || 'IN');
       })
-      .catch(err => console.error("Error fetching geo:", err));
+      .catch(err => {
+        console.error("Error fetching geo:", err);
+        setCountry('IN');
+      });
   }, []);
   const features = [
     "Resume & LinkedIn makeover",
@@ -43,13 +44,13 @@ export const Pricing: React.FC = () => {
           <div className="flex flex-col mb-10">
             <div className="flex items-center gap-3 mb-2">
               <span className="text-base text-gray-400 line-through font-bold">
-                {country === 'AU' ? '500 AUD' : '₹4,999'}
+                {!country ? <span className="inline-block w-16 h-4 bg-gray-200 animate-pulse rounded"></span> : (country === 'AU' ? '500 AUD' : '₹4,999')}
               </span>
               <span className="bg-indigo-100 text-indigo-700 text-[10px] font-black px-2 py-1 rounded">SAVE 80%</span>
             </div>
             <div className="flex items-baseline gap-2">
               <span className="text-5xl font-black text-slate-900">
-                {country === 'AU' ? '99 AUD' : '₹999'}
+                {!country ? <span className="inline-block w-32 h-10 bg-gray-200 animate-pulse rounded"></span> : (country === 'AU' ? '99 AUD' : '₹999')}
               </span>
               <span className="text-gray-400 text-sm font-medium">one-time investment</span>
             </div>
@@ -68,12 +69,14 @@ export const Pricing: React.FC = () => {
 
           <button
             onClick={() => {
+              if (!country) return;
               const link = country === 'AU' ? 'https://rzp.io/rzp/23u3EB8' : 'https://rzp.io/rzp/L3WYf37s';
               window.open(link, '_blank');
             }}
-            className="w-full bg-black text-white py-5 rounded-2xl font-bold text-lg hover:bg-gray-800 transition-all shadow-xl shadow-gray-200 active:scale-95"
+            disabled={!country}
+            className={`w-full bg-black text-white py-5 rounded-2xl font-bold text-lg transition-all shadow-xl shadow-gray-200 active:scale-95 ${!country ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-800'}`}
           >
-            Get Started
+            {country ? 'Get Started' : 'Loading...'}
           </button>
 
           <p className="text-center mt-6 text-xs text-gray-400 font-medium">

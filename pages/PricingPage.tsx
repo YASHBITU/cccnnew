@@ -57,20 +57,22 @@ const CountdownTimer: React.FC = () => {
 };
 
 export const PricingPage: React.FC = () => {
-  const [country, setCountry] = useState<string>('IN');
+  const [country, setCountry] = useState<string | null>(null);
 
   useEffect(() => {
     fetch('/api/geo')
       .then(res => res.json())
       .then(data => {
-        if (data.country) {
-          setCountry(data.country);
-        }
+        setCountry(data.country || 'IN');
       })
-      .catch(err => console.error("Error fetching geo:", err));
+      .catch(err => {
+        console.error("Error fetching geo:", err);
+        setCountry('IN');
+      });
   }, []);
 
   const handleEnrollClick = () => {
+    if (!country) return;
     const link = country === 'AU' ? 'https://rzp.io/rzp/23u3EB8' : 'https://rzp.io/rzp/L3WYf37s';
     window.open(link, '_blank');
   };
@@ -97,13 +99,13 @@ export const PricingPage: React.FC = () => {
             <div className="flex flex-col mb-8 relative z-10">
               <div className="flex items-center gap-3 mb-2">
                 <span className="text-base md:text-lg text-gray-400 line-through font-bold">
-                  {country === 'AU' ? '500 AUD' : '₹4,999.00'}
+                  {!country ? <span className="inline-block w-20 h-5 bg-gray-200 animate-pulse rounded"></span> : (country === 'AU' ? '500 AUD' : '₹4,999.00')}
                 </span>
                 <span className="bg-[#4285F4]/10 text-[#4285F4] text-[9px] md:text-[10px] font-black px-2 py-1 rounded text-depth-callout">SAVE 80%</span>
               </div>
               <div className="flex items-baseline gap-2 md:gap-3">
                 <span className="text-5xl md:text-7xl font-black text-slate-950 text-depth-heading tracking-tighter">
-                  {country === 'AU' ? '99 AUD' : '₹999'}
+                  {!country ? <span className="inline-block w-40 h-16 bg-gray-200 animate-pulse rounded"></span> : (country === 'AU' ? '99 AUD' : '₹999')}
                 </span>
                 <span className="text-gray-400 font-bold uppercase tracking-widest text-[10px] md:text-xs">One-Time Payment</span>
               </div>
@@ -133,9 +135,10 @@ export const PricingPage: React.FC = () => {
 
             <button
               onClick={handleEnrollClick}
-              className="w-full bg-[#4285F4] text-white py-5 md:py-6 rounded-[1.5rem] md:rounded-3xl font-black text-lg md:text-xl hover:bg-[#3b78e7] transition-all shadow-xl shadow-[#4285F4]/20 active:scale-95 uppercase tracking-widest text-depth-button relative z-10"
+              disabled={!country}
+              className={`w-full bg-[#4285F4] text-white py-5 md:py-6 rounded-[1.5rem] md:rounded-3xl font-black text-lg md:text-xl transition-all shadow-xl shadow-[#4285F4]/20 active:scale-95 uppercase tracking-widest text-depth-button relative z-10 ${!country ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[#3b78e7]'}`}
             >
-              Enroll Now
+              {country ? 'Enroll Now' : 'Loading...'}
             </button>
 
             {/* Premium Animated Money-Back Guarantee Section */}
