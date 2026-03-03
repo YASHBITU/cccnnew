@@ -11,7 +11,7 @@ export const placements = [
         company: "Kredit Bee",
         review: "Really thanks for CCC, i was frustrated by applying on lots of job opening, and was not even able to schedule the interview. But CCC help me to the calls, i started calls and even i gave 3 interview and finally got selected in one. Thankyou so much for your support",
         linkedin: "https://www.linkedin.com/in/dinesh-rathod-a71657399/",
-        image: "/dinesh.jpg",
+        image: "/kiran.jpg",
     },
     {
         id: 2,
@@ -21,13 +21,13 @@ export const placements = [
         company: "Toluna",
         review: "My experience was too good with CCC, Team of CCC was so experienced in Interview Process. I will recommend it to all the people who are not getting the interview calls and struggling to clear the interview. They also helped me in Resume Building and Linkedin Profile. Worth decision. Grateful to have CCC in my job hunting process",
         linkedin: "https://www.linkedin.com/in/kiran-chavan-29a3bb3a0/",
-        image: "/kiran.jpg",
+        image: "/dinesh.jpg",
     },
     {
         id: 3,
         name: "Prasann Autade",
         role: "Junior Java Developer",
-        ctc: "4 LPA",
+        ctc: "6 LPA",
         company: "Interface Solution",
         review: "As a fresher its was too difficult to get the opportunity, i was like - i need a job at any cost. I was just looking for experience, in future once i will have experience, i will focus on Better opportunity. But CCC help me to land with Interface solution as a Junior Java Developer",
         linkedin: "https://www.linkedin.com/in/prasann-autade-5b85652a7/",
@@ -110,17 +110,17 @@ export function PremiumCarousel() {
                                     className="mt-auto"
                                 >
                                     <div className="flex flex-wrap items-center gap-2 mb-3">
-                                        <span className="bg-[#4285F4] text-white text-xs font-black px-3 py-1.5 rounded-full tracking-wider uppercase shadow-lg shadow-[#4285F4]/20 pointer-events-auto">
+                                        <span className="bg-[#4285F4] text-white text-xs font-black px-3 py-1.5 rounded-full tracking-wider uppercase shadow-sm shadow-[#4285F4]/10 pointer-events-auto">
                                             {current.ctc}
                                         </span>
-                                        <span className="bg-white/10 backdrop-blur-xl border border-white/20 text-white text-xs font-black px-3 py-1.5 rounded-full tracking-wider uppercase shadow-lg pointer-events-auto">
+                                        <span className="bg-white/10 backdrop-blur-xl border border-white/20 text-white text-xs font-black px-3 py-1.5 rounded-full tracking-wider uppercase shadow-sm pointer-events-auto">
                                             {current.company}
                                         </span>
                                     </div>
-                                    <h3 className="text-3xl md:text-4xl lg:text-5xl font-black text-white mb-2 tracking-tight drop-shadow-xl">
+                                    <h3 className="text-3xl md:text-4xl lg:text-5xl font-black text-white mb-2 tracking-tight drop-shadow-md">
                                         {current.name}
                                     </h3>
-                                    <p className="text-[#4285F4] font-bold text-lg md:text-xl drop-shadow-lg">
+                                    <p className="text-[#4285F4] font-bold text-lg md:text-xl drop-shadow-sm">
                                         {current.role}
                                     </p>
                                 </motion.div>
@@ -133,9 +133,12 @@ export function PremiumCarousel() {
                         <Quote className="absolute top-8 right-8 w-24 h-24 text-slate-100 -rotate-12 opacity-50 pointer-events-none" />
 
                         <div className="relative z-10 flex-grow flex flex-col justify-center">
-                            <div className="flex gap-1 text-yellow-500 mb-6">
+                            <div className="flex gap-1.5 mb-6">
                                 {[...Array(5)].map((_, i) => (
-                                    <Star key={i} className="w-6 h-6 fill-current" />
+                                    <div key={i} className="relative">
+                                        <div className="absolute inset-0 bg-amber-400 blur-[6px] opacity-40 rounded-full scale-110" />
+                                        <Star className="w-6 h-6 fill-amber-400 text-amber-500 relative z-10 drop-shadow-[0_2px_4px_rgba(251,191,36,0.3)]" />
+                                    </div>
                                 ))}
                             </div>
 
