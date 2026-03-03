@@ -4,6 +4,7 @@ import FeaturesCards from '../components/ui/feature-shader-cards';
 import TextMarquee from '../components/ui/text-marque';
 import { TestimonialStack, Testimonial } from '../components/ui/testimonial-stack';
 import { TestimonialsSection } from '../components/ui/testimonials-with-marquee';
+import { PremiumCarousel } from '../components/ui/premium-carousel';
 import { Users, UserCheck, MessageSquare, HardDrive } from 'lucide-react';
 import { cn } from '../lib/utils';
 
@@ -194,6 +195,11 @@ export const Home: React.FC<{ onNavigate: (p: string) => void }> = ({ onNavigate
       </div>
 
       <FeaturesCards />
+
+      {/* Premium Placements Carousel */}
+      <div className="bg-slate-50 border-t border-slate-100">
+        <PremiumCarousel />
+      </div>
 
       {/* Testimonials Section - Standardized Gap */}
       <div className="pt-0 pb-0 md:pt-0 md:pb-0 overflow-hidden">
