@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import FeaturesCards from '../components/ui/feature-shader-cards';
 import TextMarquee from '../components/ui/text-marque';
 import { TestimonialStack, Testimonial } from '../components/ui/testimonial-stack';
@@ -8,7 +9,8 @@ import { PremiumCarousel } from '../components/ui/premium-carousel';
 import { Users, UserCheck, MessageSquare, HardDrive } from 'lucide-react';
 import { cn } from '../lib/utils';
 
-export const Home: React.FC<{ onNavigate: (p: string) => void }> = ({ onNavigate }) => {
+export const Home: React.FC = () => {
+  const navigate = useNavigate();
   const cccTestimonials: Testimonial[] = [
     {
       id: '1',
@@ -121,13 +123,13 @@ export const Home: React.FC<{ onNavigate: (p: string) => void }> = ({ onNavigate
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
-              onClick={() => onNavigate('pricing')}
+              onClick={() => navigate('/pricing')}
               className="w-full sm:w-auto bg-[#4285F4] text-white px-10 py-5 rounded-2xl font-bold text-lg hover:bg-[#3b78e7] transition-all shadow-2xl shadow-[#4285F4]/20 active:scale-95 text-depth-button"
             >
               Get Interview Calls
             </button>
             <button
-              onClick={() => onNavigate('services')}
+              onClick={() => navigate('/services')}
               className="w-full sm:w-auto bg-white text-slate-900 border border-slate-200 px-10 py-5 rounded-2xl font-bold text-lg hover:border-slate-400 transition-all active:scale-95 soft-shadow text-depth-callout"
             >
               See How It Works
@@ -235,7 +237,7 @@ export const Home: React.FC<{ onNavigate: (p: string) => void }> = ({ onNavigate
               <p className="text-[#4285F4] font-black text-depth-subheading uppercase italic tracking-tight">If you don’t receive at least one interview call within 15 days, we refund your money.</p>
             </div>
             <button
-              onClick={() => onNavigate('pricing')}
+              onClick={() => navigate('/pricing')}
               className="bg-black text-white px-12 py-5 rounded-2xl font-black text-xl hover:bg-[#4285F4] transition-all active:scale-95 shadow-2xl text-depth-button uppercase tracking-widest"
             >
               Start Now

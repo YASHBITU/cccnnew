@@ -1,6 +1,6 @@
 
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { Navbar } from './components/Navbar';
 import { Home } from './pages/Home';
 import { Services } from './pages/Services';
@@ -10,35 +10,34 @@ import { Contact } from './pages/Contact';
 import { Legal } from './pages/Legal';
 import { Footer } from './components/Footer';
 
-const App: React.FC = () => {
-  const [currentPage, setCurrentPage] = useState('home');
-
+const ScrollToTop: React.FC = () => {
+  const { pathname } = useLocation();
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [currentPage]);
+  }, [pathname]);
+  return null;
+};
 
-  const renderPage = () => {
-    switch (currentPage) {
-      case 'home': return <Home onNavigate={setCurrentPage} />;
-      case 'services': return <Services />;
-      case 'pricing': return <PricingPage />;
-      case 'about': return <About />;
-      case 'contact': return <Contact />;
-      case 'privacy': return <Legal type="privacy" />;
-      case 'terms': return <Legal type="terms" />;
-      case 'refund': return <Legal type="refund" />;
-      case 'shipping': return <Legal type="shipping" />;
-      default: return <Home onNavigate={setCurrentPage} />;
-    }
-  };
-
+const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#fcfcfc] selection:bg-[#4285F4]/20 selection:text-[#4285F4] relative">
-      <Navbar onNavigate={setCurrentPage} currentPage={currentPage} />
+      <ScrollToTop />
+      <Navbar />
       <main>
-        {renderPage()}
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/services" element={<Services />} />
+          <Route path="/pricing" element={<PricingPage />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/privacy" element={<Legal type="privacy" />} />
+          <Route path="/terms" element={<Legal type="terms" />} />
+          <Route path="/refund" element={<Legal type="refund" />} />
+          <Route path="/shipping" element={<Legal type="shipping" />} />
+          <Route path="*" element={<Home />} />
+        </Routes>
       </main>
-      <Footer onNavigate={setCurrentPage} />
+      <Footer />
     </div>
   );
 };

@@ -2,16 +2,15 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { cn } from '../lib/utils';
 
-interface NavbarProps {
-  onNavigate: (page: string) => void;
-  currentPage: string;
-}
-
-export const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage }) => {
+export const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const currentPath = location.pathname;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -34,20 +33,25 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage }) => {
   }, [isMobileMenuOpen]);
 
   const navItems = [
-    { name: 'Home', id: 'home' },
-    { name: 'Services', id: 'services' },
-    { name: 'Pricing', id: 'pricing' },
-    { name: 'About', id: 'about' },
-    { name: 'Contact', id: 'contact' },
+    { name: 'Home', path: '/' },
+    { name: 'Services', path: '/services' },
+    { name: 'Pricing', path: '/pricing' },
+    { name: 'About', path: '/about' },
+    { name: 'Contact', path: '/contact' },
   ];
 
-  const handleNavClick = (id: string) => {
-    onNavigate(id);
+  const isActive = (path: string) => {
+    if (path === '/') return currentPath === '/';
+    return currentPath.startsWith(path);
+  };
+
+  const handleNavClick = (path: string) => {
+    navigate(path);
     setIsMobileMenuOpen(false);
   };
 
   return (
-    <nav 
+    <nav
       className={cn(
         "fixed top-0 left-0 right-0 z-[250] transition-all duration-500 px-6 py-4 md:px-12",
         isScrolled ? "py-3 bg-white/70 backdrop-blur-2xl border-b border-slate-200/40 shadow-sm" : "bg-transparent"
@@ -55,26 +59,26 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage }) => {
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between relative">
         {/* Logo - Left Aligned */}
-        <button onClick={() => handleNavClick('home')} className="group flex items-center gap-1.5 outline-none z-[260]">
+        <Link to="/" className="group flex items-center gap-1.5 outline-none z-[260]">
           <span className="font-black text-2xl md:text-3xl tracking-tighter text-slate-950 transition-transform group-hover:scale-105 duration-300">
             CC<span className="text-[#4285F4]">C</span>
           </span>
-        </button>
+        </Link>
 
         {/* Desktop Nav - EXACT CENTER */}
         <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-10">
           {navItems.map((item) => (
             <button
-              key={item.id}
-              onClick={() => handleNavClick(item.id)}
+              key={item.path}
+              onClick={() => handleNavClick(item.path)}
               className={cn(
                 "text-[9px] font-black uppercase tracking-[0.25em] transition-all hover:text-[#4285F4] outline-none relative",
-                currentPage === item.id ? "text-[#4285F4]" : "text-slate-400"
+                isActive(item.path) ? "text-[#4285F4]" : "text-slate-400"
               )}
             >
               {item.name}
-              {currentPage === item.id && (
-                <motion.div 
+              {isActive(item.path) && (
+                <motion.div
                   layoutId="activeTab"
                   className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[#4285F4] rounded-full"
                 />
@@ -85,8 +89,8 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage }) => {
 
         {/* Action Button - Right Aligned */}
         <div className="hidden md:block">
-          <button 
-            onClick={() => handleNavClick('pricing')}
+          <button
+            onClick={() => handleNavClick('/pricing')}
             className="bg-slate-950 text-white text-[9px] font-black uppercase tracking-[0.2em] px-7 py-3 rounded-full hover:bg-[#4285F4] transition-all shadow-xl shadow-slate-200 active:scale-95"
           >
             Get Started
@@ -94,7 +98,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage }) => {
         </div>
 
         {/* Mobile Menu Toggle */}
-        <button 
+        <button
           className="md:hidden p-2 text-slate-950 z-[260] relative hover:bg-slate-50 rounded-full transition-colors outline-none"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         >
@@ -115,35 +119,35 @@ export const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentPage }) => {
             <div className="flex flex-col gap-4 w-full max-w-xs relative z-[250]">
               {navItems.map((item, i) => (
                 <motion.button
-                  key={item.id}
+                  key={item.path}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.05, type: "spring", stiffness: 120 }}
-                  onClick={() => handleNavClick(item.id)}
+                  onClick={() => handleNavClick(item.path)}
                   className={cn(
                     "text-4xl font-black uppercase tracking-tighter transition-all py-2 outline-none",
-                    currentPage === item.id ? "text-[#4285F4]" : "text-slate-400 hover:text-slate-950"
+                    isActive(item.path) ? "text-[#4285F4]" : "text-slate-400 hover:text-slate-950"
                   )}
                 >
                   {item.name}
                 </motion.button>
               ))}
-              
+
               <motion.div
                 initial={{ opacity: 0, scale: 0.9, y: 30 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
                 className="mt-8"
               >
-                <button 
-                  onClick={() => handleNavClick('pricing')}
+                <button
+                  onClick={() => handleNavClick('/pricing')}
                   className="w-full bg-[#4285F4] text-white font-black text-lg uppercase tracking-widest py-5 rounded-2xl shadow-2xl shadow-[#4285F4]/30 active:scale-95 transition-all outline-none"
                 >
                   Get Started
                 </button>
               </motion.div>
             </div>
-            
+
             {/* Background Branding Elements for Mobile Menu */}
             <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] select-none pointer-events-none -z-10">
               <span className="text-[60vw] font-black leading-none">CCC</span>
