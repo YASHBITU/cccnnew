@@ -119,14 +119,14 @@ export const PortalPage: React.FC = () => {
     return saved ? JSON.parse(saved) : [];
   });
 
-  const LINKS_VERSION = 'v3';
+  const LINKS_VERSION = 'v4';
   const defaultLinks: SharedLink[] = [
     {
-      id: '1',
-      title: '3. Linkedin Job Hunt Stratergy',
-      url: 'https://drive.google.com/file/d/1_U6C3Zmw_2TbeJhHSF7eztUGzLNkXccl/view?usp=sharing',
-      description: 'Step-by-step LinkedIn job hunt strategy guide covering daily application tactics and Chrome extension usage.',
-      category: 'Guides'
+      id: '3',
+      title: '1. RESUME',
+      url: 'https://drive.google.com/file/d/1Sz0Lcr4Bkt4thdzJYl9hwWnKR2xXp0dm/view?usp=sharing',
+      description: 'ATS-optimized resume building guide — structure, keywords, and formatting as explained in Session 1.',
+      category: 'Templates'
     },
     {
       id: '2',
@@ -136,11 +136,11 @@ export const PortalPage: React.FC = () => {
       category: 'Swipe Files'
     },
     {
-      id: '3',
-      title: '1. RESUME',
-      url: 'https://drive.google.com/file/d/1Sz0Lcr4Bkt4thdzJYl9hwWnKR2xXp0dm/view?usp=sharing',
-      description: 'ATS-optimized resume building guide — structure, keywords, and formatting as explained in Session 1.',
-      category: 'Templates'
+      id: '1',
+      title: '3. Linkedin Job Hunt Stratergy',
+      url: 'https://drive.google.com/file/d/1_U6C3Zmw_2TbeJhHSF7eztUGzLNkXccl/view?usp=sharing',
+      description: 'Step-by-step LinkedIn job hunt strategy guide covering daily application tactics and Chrome extension usage.',
+      category: 'Guides'
     }
   ];
 
