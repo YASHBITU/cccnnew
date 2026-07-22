@@ -119,28 +119,28 @@ export const PortalPage: React.FC = () => {
     return saved ? JSON.parse(saved) : [];
   });
 
-  const LINKS_VERSION = 'v2';
+  const LINKS_VERSION = 'v3';
   const defaultLinks: SharedLink[] = [
     {
       id: '1',
-      title: 'ATS-Friendly Google Docs Resume Template',
+      title: '3. Linkedin Job Hunt Stratergy',
       url: 'https://drive.google.com/file/d/1_U6C3Zmw_2TbeJhHSF7eztUGzLNkXccl/view?usp=sharing',
-      description: 'Recruiter-optimized structural layouts matching single and double column specifications.',
-      category: 'Templates'
+      description: 'Step-by-step LinkedIn job hunt strategy guide covering daily application tactics and Chrome extension usage.',
+      category: 'Guides'
     },
     {
       id: '2',
-      title: 'LinkedIn Positioning & Outreach Swipe File',
+      title: '2. LINKEDIN PROFILE',
       url: 'https://drive.google.com/file/d/1wyNLCdhdGJ74X2o4L5duVhpW1VuXfOZi/view?usp=sharing',
-      description: 'Ready-to-use template messages, connection request scripts, and email follow-ups for cold networking.',
+      description: 'Complete LinkedIn profile optimization guide — headline, summary, experience, and connection strategies.',
       category: 'Swipe Files'
     },
     {
       id: '3',
-      title: '15-Day Job Search Action Matrix Checklist',
+      title: '1. RESUME',
       url: 'https://drive.google.com/file/d/1Sz0Lcr4Bkt4thdzJYl9hwWnKR2xXp0dm/view?usp=sharing',
-      description: 'A day-by-day step matrix mapping exactly how to perform targeted applications and check tasks.',
-      category: 'Guides'
+      description: 'ATS-optimized resume building guide — structure, keywords, and formatting as explained in Session 1.',
+      category: 'Templates'
     }
   ];
 
@@ -180,7 +180,7 @@ export const PortalPage: React.FC = () => {
       title: "Session 2: LinkedIn Profile Optimization",
       duration: "18:45",
       description: "Watch the LinkedIn Profile Optimization video. Apply everything step by step to your LinkedIn profile. Spend sufficient time optimizing your LinkedIn profile properly. Again, quality matters more than speed.",
-      videoUrl: "https://drive.google.com/file/d/1KD0z96AiaAPqs02KAoQ1DE8peDFQeuTu/view?usp=sharing",
+      videoUrl: "https://drive.google.com/file/d/1vN9hL1tDbeeOwaCHXsmEC_telozT5FJV/view?usp=sharing",
       thumbnail: "https://images.unsplash.com/photo-1616469829581-73993eb86b02?q=80&w=640&auto=format&fit=crop"
     },
     {
@@ -188,7 +188,7 @@ export const PortalPage: React.FC = () => {
       title: "Session 3: LinkedIn Job Hunt Strategy (Daily Work) 🔥",
       duration: "21:10",
       description: "This is the most important part of CCC. Watch the LinkedIn Job Hunt Strategy video very carefully. Do not skip any minute of the video. At the end of the video there is the most useful thing. This includes the exact steps of Job Hunt strategy and Chrome extension usage. Start applying using this strategy. This is not a one-day task—you need to work on this daily for best results. Once you start getting Interview calls, inform CCC immediately. We’ll guide you on this.",
-      videoUrl: "https://drive.google.com/file/d/1vN9hL1tDbeeOwaCHXsmEC_telozT5FJV/view?usp=sharing",
+      videoUrl: "https://drive.google.com/file/d/1KD0z96AiaAPqs02KAoQ1DE8peDFQeuTu/view?usp=sharing",
       thumbnail: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=640&auto=format&fit=crop"
     }
   ];
