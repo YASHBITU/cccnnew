@@ -42,7 +42,11 @@ async function getSheetTitle(): Promise<string> {
     throw new Error('Google Sheets Service Account credentials or Spreadsheet ID not configured.');
   }
 
-  const headers = await jwtClient.getRequestHeaders();
+  const tokenResponse = await jwtClient.getAccessToken();
+  const token = tokenResponse.token;
+  const headers = {
+    Authorization: `Bearer ${token}`
+  };
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}?fields=sheets.properties.title`;
 
   const response = await fetch(url, {
@@ -81,7 +85,11 @@ async function sheetsApiRequest(method: string, rangeWithoutSheet: string, body?
   const sheetTitle = await getSheetTitle();
   const range = `${sheetTitle}!${rangeWithoutSheet}`;
 
-  const headers = await jwtClient.getRequestHeaders();
+  const tokenResponse = await jwtClient.getAccessToken();
+  const token = tokenResponse.token;
+  const headers = {
+    Authorization: `Bearer ${token}`
+  };
   let url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${encodeURIComponent(range)}`;
   
   if (method === 'POST') {
