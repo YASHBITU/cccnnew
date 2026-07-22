@@ -38,6 +38,7 @@ export const Navbar: React.FC = () => {
     { name: 'Pricing', path: '/pricing' },
     { name: 'About', path: '/about' },
     { name: 'Contact', path: '/contact' },
+    { name: 'Portal', path: '/portal' },
   ];
 
   const isActive = (path: string) => {
