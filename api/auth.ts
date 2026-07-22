@@ -1,74 +1,27 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { JWT } from 'google-auth-library';
-import fs from 'fs';
-import path from 'path';
 
-// Load Google Service Account credentials
-let credentials: any = null;
-let diagnostics: string[] = [];
-const credPath = path.join(process.cwd(), 'credentials.json');
+// Hardcoded Google Service Account credentials & Spreadsheet ID as requested to skip Vercel dashboard environment variables setup
+const SPREADSHEET_ID = "1ib-kb2u4AkQGg43HWcAd9BCEHsgBwv-fKqCeB4smSSQ";
 
-if (fs.existsSync(credPath)) {
-  try {
-    credentials = JSON.parse(fs.readFileSync(credPath, 'utf8'));
-    diagnostics.push('Loaded credentials from local credentials.json');
-  } catch (err: any) {
-    console.error('Failed to parse credentials.json:', err);
-    diagnostics.push('Failed to parse credentials.json: ' + err.message);
-  }
-} else if (process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL && process.env.GOOGLE_PRIVATE_KEY) {
-  let privateKey = process.env.GOOGLE_PRIVATE_KEY.trim();
-  diagnostics.push(`Loading from env. Raw length: ${privateKey.length}`);
-
-  if (privateKey.includes('private_key')) {
-    diagnostics.push('Error: key value contains the string "private_key" (copied full JSON line)');
-  }
-
-  if (privateKey.startsWith('"') && privateKey.endsWith('"')) {
-    privateKey = privateKey.slice(1, -1);
-    diagnostics.push('Stripped double quotes');
-  } else if (privateKey.startsWith("'") && privateKey.endsWith("'")) {
-    privateKey = privateKey.slice(1, -1);
-    diagnostics.push('Stripped single quotes');
-  }
-
-  const cleanKey = privateKey.replace(/\\n/g, '\n').trim();
-  if (!cleanKey.startsWith('-----BEGIN PRIVATE KEY-----')) {
-    diagnostics.push(`Bad Header: "${cleanKey.substring(0, 30)}..."`);
-  }
-  if (!cleanKey.endsWith('-----END PRIVATE KEY-----')) {
-    diagnostics.push(`Bad Footer: "...${cleanKey.substring(cleanKey.length - 30)}"`);
-  }
-
-  credentials = {
-    client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-    private_key: cleanKey,
-  };
-} else {
-  diagnostics.push('No Service Account credentials found (env keys or file missing)');
-}
-
-const SPREADSHEET_ID = process.env.GOOGLE_SPREADSHEET_ID || process.env.VITE_GOOGLE_SPREADSHEET_ID;
+const credentials = {
+  client_email: "sheets-tracker-bot@cccc-503212.iam.gserviceaccount.com",
+  // Injecting private key directly to avoid formatting parsing errors on Vercel
+  private_key: "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDJTjdcqPEUIoA2\nc/et0GWT/g83ShebjKsUvKXUzWvanHXQ/MFxTYi8dxo8Kj7cIIjfak7PyJ83Nqs5\n/4CaPibVJ93NhYq3798PVRHJ7PRBWX4UdUufBxO3Cp73VZnXiBumA25Ce2noLBcS\nPb7YaECQdmnjd8Ch9I4uJrutzInsRrLQThe4YS0kH9wXVSpCfQlVpnWelvVrXK6D\n6ve91vPCewDQtJXBswEUhGlRCWbcM4aZ7kuvcXOvF1y4bbaDLzeHV2YzqZb3MsGj\nWUB4UUaR1FY2KYrfN7nqG0G49FblRMLm8OdAJwfDTBTXISdckmhUNF++3m9ARg+S\nFCIX4TvzAgMBAAECggEAHwT2cvN1cpd+ZOWpx2woEDiYj6R9zseg9SkR70tYJe+b\nbVYFWOLhrGjjRLIdzZMV2Zdqst9ElCAlx7d0pvqSG/ZwrzgMusXeUWEtGeMcIEBy\nCnpTP3C6ZlI0p1gsGeeB8IBG1T0Ugg+JM+kKfL5Tye71PMqPMbrwIxxvfxsthZgk\nAypc6BJ6jhcOl2tIAMhZOo1ZGKctb/ATilO4BdqS/07XLkGle+RjBtr7T+JZXXyJ\ncQYV/8z7prPWWH6ydB6NekvyQwd30yuNr71D81OrO+vm9kvH2UUuMJMycgTqREU1\nzd/C/XMBXg9NoXlzyQrmMoVEJp9BBdlk6KemCkpEAQKBgQDmD4SK+UMup1SgB11A\nTsYm54RNgWfecIcs/SpmqUnnVus+xzfUPPUYFxdh3teAxLf6M4Fttg2cxPAn/Wjw\nhcH811YMy7Ee1GK/TxKpC/wTP8L5ojaTbOB63yuldtUuwVE1IJIz42agzEjZVp1R\nuDPgXjHgLTxrLJIA+r+Sw95nMwKBgQDgALXPEVV+kw+YK/mNCN066Yn3BQs+JHiJ\nK/wP/hwRX/SWX6fsxvEtlsrevvrXSqQiqx5XTTSikRHaCYJd0KZyGQTiUkt6GNt6\ntVd3KcG8BHw7MhAU3BMNR1W+mhXJeIgnJeHjxEwpJtsv/YewiMEcVxANS2DKjjNG\n/CQfvVLYQQKBgAi0rZ9Ur2Ykjt8/aBf24yi1uhv0uamBOJxLOD+KSHGoqF5Hy6UM\naXnv5cKeXClTSGL/b/Zm3T0BdtUMkdwIM78NpwP08U7pWpNCusIK4g8Yaphnuwj5\nJcWAjHZGeOq8BgaspNuxz0Bmeps+29Ur00q6Rcjl7VNg7GV9F6LGJrRhAoGBANtp\nlqxnLDk5T3Mcz+oHnruP+iXN+P87th2WyeXYYCHcvbV1qQTSsXaYV8rrgsTTRgb3\nWlblNwNt2fCak+nU8NSeERymw2urYYDGlBATBMNoGU/ab8oe70J4d1Kll2Wq/KJs\BuGVa4x7lQNi8UBIE+/wj7aV+Q8vTqbfX3r/dWCBAoGBAOMBmewwRPs1jRRj0Oxz\n3tNagDzhz3YIOzjlunxag2HB4sTJV+W1GIw/qy6uD3JYJXNrgASmD9TYzqy76Zqt\n36xwZ/ZY52ARghKjB28xEFvDfVUX9Xh4wn60+jATdZMkl5leeJXfNonzVUdNxhHY\nAx9lRH0e9He2QtAskjh0jSmE\n-----END PRIVATE KEY-----\n"
+};
 
 // Initialize JWT Client for Google Sheets API v4
-let jwtClient: JWT | null = null;
-if (credentials && credentials.client_email && credentials.private_key) {
-  jwtClient = new JWT({
-    email: credentials.client_email,
-    key: credentials.private_key,
-    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-  });
-}
+const jwtClient = new JWT({
+  email: credentials.client_email,
+  key: credentials.private_key,
+  scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+});
 
 // Cache sheet title to prevent redundant API queries
 let cachedSheetTitle = "";
 
 async function getSheetTitle(): Promise<string> {
   if (cachedSheetTitle) return cachedSheetTitle;
-
-  if (!jwtClient || !SPREADSHEET_ID) {
-    throw new Error('Google Sheets Service Account credentials or Spreadsheet ID not configured.');
-  }
 
   const tokenResponse = await jwtClient.getAccessToken();
   const token = tokenResponse.token;
@@ -95,7 +48,7 @@ async function getSheetTitle(): Promise<string> {
   if (studentsTab) {
     cachedSheetTitle = "Students";
   } else if (sheets.length > 0) {
-    // Fallback to the very first tab in the spreadsheet (whatever it is named)
+    // Fallback to the very first tab in the spreadsheet
     cachedSheetTitle = sheets[0].properties?.title || "Sheet1";
   } else {
     cachedSheetTitle = "Sheet1";
@@ -106,10 +59,6 @@ async function getSheetTitle(): Promise<string> {
 
 // Google Sheets API V4 Helper (Appends Sheet Title automatically)
 async function sheetsApiRequest(method: string, rangeWithoutSheet: string, body?: any) {
-  if (!jwtClient || !SPREADSHEET_ID) {
-    throw new Error('Google Sheets Service Account Credentials or Spreadsheet ID (GOOGLE_SPREADSHEET_ID) not configured.');
-  }
-
   const sheetTitle = await getSheetTitle();
   const range = `${sheetTitle}!${rangeWithoutSheet}`;
 
@@ -143,29 +92,6 @@ async function sheetsApiRequest(method: string, rangeWithoutSheet: string, body?
   return response.json();
 }
 
-// Local mock database in case credentials/sheets are not configured yet
-interface MockStudent {
-  studentId: string;
-  name: string;
-  email: string;
-  phone: string;
-  password: string;
-  modules: boolean[];
-  resumeLink: string;
-}
-
-const mockDb: MockStudent[] = [
-  {
-    studentId: "student@ccc.com",
-    name: "Demo Student",
-    email: "student@ccc.com",
-    phone: "+61 412 345 678",
-    password: "CCC2026",
-    modules: [true, false, false],
-    resumeLink: "https://docs.google.com/document/d/1t-8Z-w9jI03o3UeK8k7c7N-N1vX_0l0u/copy"
-  }
-];
-
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // CORS Headers
   res.setHeader('Access-Control-Allow-Credentials', 'true');
@@ -186,258 +112,163 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const { action, studentId, name, email, phone, password, modules, resumeLink } = req.body;
 
-  const hasSheets = jwtClient && SPREADSHEET_ID;
-
-  if (hasSheets) {
-    try {
-      // 1. REGISTER
-      if (action === 'register') {
-        const data = await sheetsApiRequest('GET', 'A:J');
-        const rows = data.values || [];
-
-        for (let i = 1; i < rows.length; i++) {
-          const cellId = rows[i][0] ? rows[i][0].toString().trim().toLowerCase() : "";
-          const cellEmail = rows[i][2] ? rows[i][2].toString().trim().toLowerCase() : "";
-          
-          if ((cellId && cellId === studentId.trim().toLowerCase()) || 
-              (cellEmail && cellEmail === email.trim().toLowerCase())) {
-            return res.status(400).json({ success: false, message: 'Student ID or Email already exists in Google Sheet.' });
-          }
-        }
-
-        await sheetsApiRequest('POST', 'A:J', {
-          values: [[
-            studentId.trim(),
-            name.trim(),
-            email.trim(),
-            phone.trim(),
-            password.trim(),
-            'FALSE',
-            'FALSE',
-            'FALSE',
-            new Date().toISOString(),
-            ''
-          ]]
-        });
-
-        return res.status(200).json({
-          success: true,
-          message: 'Student registered successfully in Google Sheet.',
-          isLiveSheet: true
-        });
-      }
-
-      // 2. LOGIN
-      if (action === 'login') {
-        const data = await sheetsApiRequest('GET', 'A:J');
-        const rows = data.values || [];
-        const targetId = studentId.trim().toLowerCase();
-
-        let studentRowIndex = -1;
-        let studentData: any = null;
-
-        for (let i = 1; i < rows.length; i++) {
-          const cellId = rows[i][0] ? rows[i][0].toString().trim().toLowerCase() : "";
-          const cellEmail = rows[i][2] ? rows[i][2].toString().trim().toLowerCase() : "";
-
-          if ((cellId && cellId === targetId) || (cellEmail && cellEmail === targetId)) {
-            if (rows[i][4] && rows[i][4].toString() === password.toString()) {
-              studentRowIndex = i + 1;
-              studentData = rows[i];
-              break;
-            } else {
-              return res.status(401).json({ success: false, message: 'Incorrect password.' });
-            }
-          }
-        }
-
-        if (studentRowIndex === -1) {
-          return res.status(404).json({ success: false, message: 'Student not found in Google Sheet.' });
-        }
-
-        // Update Last Active date
-        await sheetsApiRequest('PUT', `I${studentRowIndex}`, {
-          values: [[new Date().toISOString()]]
-        });
-
-        return res.status(200).json({
-          success: true,
-          student: {
-            studentId: studentData[0],
-            name: studentData[1],
-            email: studentData[2],
-            phone: studentData[3],
-            modules: [
-              studentData[5]?.toString().toUpperCase() === 'TRUE',
-              studentData[6]?.toString().toUpperCase() === 'TRUE',
-              studentData[7]?.toString().toUpperCase() === 'TRUE'
-            ],
-            resumeLink: studentData[9] || ''
-          },
-          isLiveSheet: true
-        });
-      }
-
-      // 3. SYNC MODULES
-      if (action === 'sync') {
-        const data = await sheetsApiRequest('GET', 'A:A');
-        const rows = data.values || [];
-        const targetId = studentId.trim().toLowerCase();
-        let studentRowIndex = -1;
-
-        for (let i = 1; i < rows.length; i++) {
-          const cellId = rows[i][0] ? rows[i][0].toString().trim().toLowerCase() : "";
-          if (cellId && cellId === targetId) {
-            studentRowIndex = i + 1;
-            break;
-          }
-        }
-
-        if (studentRowIndex === -1) {
-          return res.status(404).json({ success: false, message: 'Student not found.' });
-        }
-
-        await sheetsApiRequest('PUT', `F${studentRowIndex}:I${studentRowIndex}`, {
-          values: [[
-            modules[0] ? 'TRUE' : 'FALSE',
-            modules[1] ? 'TRUE' : 'FALSE',
-            modules[2] ? 'TRUE' : 'FALSE',
-            new Date().toISOString()
-          ]]
-        });
-
-        return res.status(200).json({ success: true, message: 'Progress saved successfully.' });
-      }
-
-      // 4. UPDATE RESUME URL
-      if (action === 'update_resume') {
-        const data = await sheetsApiRequest('GET', 'A:A');
-        const rows = data.values || [];
-        const targetId = studentId.trim().toLowerCase();
-        let studentRowIndex = -1;
-
-        for (let i = 1; i < rows.length; i++) {
-          const cellId = rows[i][0] ? rows[i][0].toString().trim().toLowerCase() : "";
-          if (cellId && cellId === targetId) {
-            studentRowIndex = i + 1;
-            break;
-          }
-        }
-
-        if (studentRowIndex === -1) {
-          return res.status(404).json({ success: false, message: 'Student not found.' });
-        }
-
-        await sheetsApiRequest('PUT', `I${studentRowIndex}:J${studentRowIndex}`, {
-          values: [[
-            new Date().toISOString(),
-            resumeLink
-          ]]
-        });
-
-        return res.status(200).json({ success: true, message: 'Resume link updated successfully.' });
-      }
-
-      return res.status(400).json({ success: false, message: 'Invalid action parameter.' });
-
-    } catch (error: any) {
-      console.error('Google Sheets API operations failed:', error);
-      return res.status(500).json({
-        success: false,
-        message: 'Google Sheets direct API error occurred.',
-        error: error.message,
-        diagnostics: diagnostics
-      });
-    }
-  }
-
-  // FALLBACK (Mock mode logic)
   try {
+    // 1. REGISTER
     if (action === 'register') {
-      const exists = mockDb.some(
-        s => s.studentId.toLowerCase() === studentId.toLowerCase() || s.email.toLowerCase() === email.toLowerCase()
-      );
-      if (exists) {
-        return res.status(400).json({ success: false, message: 'Student ID or Email already exists in local system.' });
+      const data = await sheetsApiRequest('GET', 'A:J');
+      const rows = data.values || [];
+
+      for (let i = 1; i < rows.length; i++) {
+        const cellId = rows[i][0] ? rows[i][0].toString().trim().toLowerCase() : "";
+        const cellEmail = rows[i][2] ? rows[i][2].toString().trim().toLowerCase() : "";
+        
+        if ((cellId && cellId === studentId.trim().toLowerCase()) || 
+            (cellEmail && cellEmail === email.trim().toLowerCase())) {
+          return res.status(400).json({ success: false, message: 'Student ID or Email already exists in Google Sheet.' });
+        }
       }
 
-      const newStudent: MockStudent = {
-        studentId,
-        name,
-        email,
-        phone,
-        password,
-        modules: [false, false, false],
-        resumeLink: ''
-      };
-      
-      mockDb.push(newStudent);
+      await sheetsApiRequest('POST', 'A:J', {
+        values: [[
+          studentId.trim(),
+          name.trim(),
+          email.trim(),
+          phone.trim(),
+          password.trim(),
+          'FALSE',
+          'FALSE',
+          'FALSE',
+          new Date().toISOString(),
+          ''
+        ]]
+      });
 
       return res.status(200).json({
         success: true,
-        message: 'Student registered successfully (Mock Mode)',
-        isLiveSheet: false
+        message: 'Student registered successfully in Google Sheet.',
+        isLiveSheet: true
       });
     }
 
+    // 2. LOGIN
     if (action === 'login') {
-      const student = mockDb.find(
-        s => s.studentId.toLowerCase() === studentId.toLowerCase() || s.email.toLowerCase() === studentId.toLowerCase()
-      );
+      const data = await sheetsApiRequest('GET', 'A:J');
+      const rows = data.values || [];
+      const targetId = studentId.trim().toLowerCase();
 
-      if (!student) {
-        return res.status(404).json({ success: false, message: 'Student ID not found in local system.' });
+      let studentRowIndex = -1;
+      let studentData: any = null;
+
+      for (let i = 1; i < rows.length; i++) {
+        const cellId = rows[i][0] ? rows[i][0].toString().trim().toLowerCase() : "";
+        const cellEmail = rows[i][2] ? rows[i][2].toString().trim().toLowerCase() : "";
+
+        if ((cellId && cellId === targetId) || (cellEmail && cellEmail === targetId)) {
+          if (rows[i][4] && rows[i][4].toString() === password.toString()) {
+            studentRowIndex = i + 1;
+            studentData = rows[i];
+            break;
+          } else {
+            return res.status(401).json({ success: false, message: 'Incorrect password.' });
+          }
+        }
       }
 
-      if (student.password !== password) {
-        return res.status(401).json({ success: false, message: 'Incorrect password.' });
+      if (studentRowIndex === -1) {
+        return res.status(404).json({ success: false, message: 'Student not found in Google Sheet.' });
       }
+
+      // Update Last Active date
+      await sheetsApiRequest('PUT', `I${studentRowIndex}`, {
+        values: [[new Date().toISOString()]]
+      });
 
       return res.status(200).json({
         success: true,
         student: {
-          studentId: student.studentId,
-          name: student.name,
-          email: student.email,
-          phone: student.phone,
-          modules: student.modules,
-          resumeLink: student.resumeLink || ''
+          studentId: studentData[0],
+          name: studentData[1],
+          email: studentData[2],
+          phone: studentData[3],
+          modules: [
+            studentData[5]?.toString().toUpperCase() === 'TRUE',
+            studentData[6]?.toString().toUpperCase() === 'TRUE',
+            studentData[7]?.toString().toUpperCase() === 'TRUE'
+          ],
+          resumeLink: studentData[9] || ''
         },
-        isLiveSheet: false
+        isLiveSheet: true
       });
     }
 
+    // 3. SYNC MODULES
     if (action === 'sync') {
-      const student = mockDb.find(s => s.studentId.toLowerCase() === studentId.toLowerCase());
-      if (!student) {
-        return res.status(404).json({ success: false, message: 'Student ID not found.' });
+      const data = await sheetsApiRequest('GET', 'A:A');
+      const rows = data.values || [];
+      const targetId = studentId.trim().toLowerCase();
+      let studentRowIndex = -1;
+
+      for (let i = 1; i < rows.length; i++) {
+        const cellId = rows[i][0] ? rows[i][0].toString().trim().toLowerCase() : "";
+        if (cellId && cellId === targetId) {
+          studentRowIndex = i + 1;
+          break;
+        }
       }
 
-      student.modules = modules;
-      return res.status(200).json({
-        success: true,
-        message: 'Progress saved successfully (Mock Mode)',
-        isLiveSheet: false
+      if (studentRowIndex === -1) {
+        return res.status(404).json({ success: false, message: 'Student not found.' });
+      }
+
+      await sheetsApiRequest('PUT', `F${studentRowIndex}:I${studentRowIndex}`, {
+        values: [[
+          modules[0] ? 'TRUE' : 'FALSE',
+          modules[1] ? 'TRUE' : 'FALSE',
+          modules[2] ? 'TRUE' : 'FALSE',
+          new Date().toISOString()
+        ]]
       });
+
+      return res.status(200).json({ success: true, message: 'Progress saved successfully.' });
     }
 
+    // 4. UPDATE RESUME URL
     if (action === 'update_resume') {
-      const student = mockDb.find(s => s.studentId.toLowerCase() === studentId.toLowerCase());
-      if (!student) {
-        return res.status(404).json({ success: false, message: 'Student ID not found.' });
+      const data = await sheetsApiRequest('GET', 'A:A');
+      const rows = data.values || [];
+      const targetId = studentId.trim().toLowerCase();
+      let studentRowIndex = -1;
+
+      for (let i = 1; i < rows.length; i++) {
+        const cellId = rows[i][0] ? rows[i][0].toString().trim().toLowerCase() : "";
+        if (cellId && cellId === targetId) {
+          studentRowIndex = i + 1;
+          break;
+        }
       }
 
-      student.resumeLink = resumeLink;
-      return res.status(200).json({
-        success: true,
-        message: 'Resume link updated successfully (Mock Mode)',
-        isLiveSheet: false
+      if (studentRowIndex === -1) {
+        return res.status(404).json({ success: false, message: 'Student not found.' });
+      }
+
+      await sheetsApiRequest('PUT', `I${studentRowIndex}:J${studentRowIndex}`, {
+        values: [[
+          new Date().toISOString(),
+          resumeLink
+        ]]
       });
+
+      return res.status(200).json({ success: true, message: 'Resume link updated successfully.' });
     }
 
     return res.status(400).json({ success: false, message: 'Invalid action parameter.' });
 
   } catch (error: any) {
-    return res.status(500).json({ success: false, message: 'Internal Server Error', error: error.message });
+    console.error('Google Sheets API operations failed:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Google Sheets direct API error occurred.',
+      error: error.message
+    });
   }
 }
