@@ -43,8 +43,28 @@ interface StudentProfile {
   name: string;
   email: string;
   phone: string;
-  resumeLink: string;
 }
+
+const getYoutubeId = (url: string) => {
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+  const match = url.match(regExp);
+  return (match && match[2].length === 11) ? match[2] : null;
+};
+
+const getVimeoId = (url: string) => {
+  const regExp = /vimeo\.com\/(?:video\/)?([0-9]+)/;
+  const match = url.match(regExp);
+  return match ? match[1] : null;
+};
+
+const getGoogleDriveStreamUrl = (url: string) => {
+  const regExp = /drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/;
+  const match = url.match(regExp);
+  if (match && match[1]) {
+    return `https://docs.google.com/uc?export=download&id=${match[1]}`;
+  }
+  return null;
+};
 
 export const PortalPage: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
@@ -594,6 +614,11 @@ export const PortalPage: React.FC = () => {
     );
   }
 
+  const youtubeId = getYoutubeId(activeModule.videoUrl);
+  const vimeoId = getVimeoId(activeModule.videoUrl);
+  const driveStreamUrl = getGoogleDriveStreamUrl(activeModule.videoUrl);
+  const videoSrc = driveStreamUrl || activeModule.videoUrl;
+
   // Dashboard Main View
   return (
     <div className="min-h-screen pt-24 pb-20 md:pt-32 md:pb-32 bg-[#fcfcfc]">
@@ -704,17 +729,38 @@ export const PortalPage: React.FC = () => {
               {/* Left Column: Video Player & Synopsis */}
               <div className="lg:col-span-2 space-y-6">
                 <div className="bg-slate-950 border border-slate-900 rounded-[2.5rem] overflow-hidden relative shadow-2xl group flex items-center justify-center aspect-video">
-                  <video
-                    ref={videoRef}
-                    src={activeModule.videoUrl}
-                    className="w-full h-full object-cover"
-                    onClick={handleVideoPlayToggle}
-                    preload="auto"
-                  />
-
-                  {!isPlaying && (
+                  {isPlaying ? (
+                    youtubeId ? (
+                      <iframe
+                        src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0`}
+                        className="w-full h-full border-0 absolute inset-0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                    ) : vimeoId ? (
+                      <iframe
+                        src={`https://player.vimeo.com/video/${vimeoId}?autoplay=1`}
+                        className="w-full h-full border-0 absolute inset-0"
+                        allow="autoplay; fullscreen; picture-in-picture"
+                        allowFullScreen
+                      />
+                    ) : (
+                      <video
+                        ref={videoRef}
+                        src={videoSrc}
+                        className="w-full h-full object-cover absolute inset-0"
+                        onClick={handleVideoPlayToggle}
+                        preload="auto"
+                        autoPlay
+                        controls
+                      />
+                    )
+                  ) : (
                     <div 
-                      className="absolute inset-0 w-full h-full flex flex-col justify-between p-6 bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-transparent cursor-pointer"
+                      className="absolute inset-0 w-full h-full flex flex-col justify-between p-6 bg-cover bg-center cursor-pointer"
+                      style={{ 
+                        backgroundImage: `linear-gradient(to top, rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.4)), url(${activeModule.thumbnail})` 
+                      }}
                       onClick={handleVideoPlayToggle}
                     >
                       <div className="self-end px-3 py-1 bg-slate-900/80 backdrop-blur-md rounded-lg text-xs font-bold text-slate-300">
@@ -738,7 +784,7 @@ export const PortalPage: React.FC = () => {
                     </div>
                   )}
 
-                  {isPlaying && (
+                  {isPlaying && !youtubeId && !vimeoId && (
                     <div className="absolute top-4 right-4 z-40 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <button 
                         onClick={handleVideoPlayToggle}
