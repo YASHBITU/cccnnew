@@ -38,7 +38,8 @@ export const PortalPage: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
     return localStorage.getItem('ccc_portal_auth') === 'true';
   });
-  const [passcode, setPasscode] = useState<string>('');
+  const [studentId, setStudentId] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
   const [authError, setAuthError] = useState<string>('');
 
   const [activeTab, setActiveTab] = useState<'modules' | 'resources' | 'booking'>('modules');
@@ -135,13 +136,17 @@ export const PortalPage: React.FC = () => {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    // Default secret passcode: CCC2026 or welcome
-    if (passcode.trim().toUpperCase() === 'CCC2026' || passcode.trim().toLowerCase() === 'demo') {
+    if (!studentId.trim()) {
+      setAuthError('Student ID is required.');
+      return;
+    }
+    const cleanPassword = password.trim();
+    if (cleanPassword.toUpperCase() === 'CCC2026' || cleanPassword.toLowerCase() === 'demo') {
       setIsAuthenticated(true);
       localStorage.setItem('ccc_portal_auth', 'true');
       setAuthError('');
     } else {
-      setAuthError('Invalid passcode. Use "CCC2026" or click "Quick Demo Preview".');
+      setAuthError('Invalid credentials. Password is "CCC2026" or click "Quick Demo Preview".');
     }
   };
 
@@ -221,14 +226,28 @@ export const PortalPage: React.FC = () => {
           <h2 className="text-3xl font-black tracking-tight text-slate-900 mb-2">Student Portal</h2>
           <p className="text-slate-400 text-sm font-semibold mb-8 uppercase tracking-widest text-[9px]">Career Craft Consultancy Curriculum</p>
 
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div className="relative">
+          <form onSubmit={handleLogin} className="space-y-4 text-left">
+            <div>
+              <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Student ID or Email</label>
               <input 
                 type="text" 
-                placeholder="Enter Access Key (e.g. CCC2026)" 
-                value={passcode}
-                onChange={(e) => setPasscode(e.target.value)}
-                className="w-full px-6 py-4 bg-slate-50 border border-slate-200/80 rounded-2xl text-slate-900 font-bold text-center placeholder:text-slate-400 focus:outline-none focus:border-[#4285F4] focus:ring-1 focus:ring-[#4285F4] transition-all"
+                required
+                placeholder="student@example.com" 
+                value={studentId}
+                onChange={(e) => setStudentId(e.target.value)}
+                className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200/80 rounded-2xl text-slate-900 font-semibold focus:outline-none focus:border-[#4285F4] focus:ring-1 focus:ring-[#4285F4] transition-all"
+              />
+            </div>
+
+            <div>
+              <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Password</label>
+              <input 
+                type="password" 
+                required
+                placeholder="••••••••" 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200/80 rounded-2xl text-slate-900 font-semibold focus:outline-none focus:border-[#4285F4] focus:ring-1 focus:ring-[#4285F4] transition-all"
               />
             </div>
 

@@ -20,6 +20,9 @@ const ScrollToTop: React.FC = () => {
 };
 
 const App: React.FC = () => {
+  const location = useLocation();
+  const showFooter = location.pathname !== '/portal';
+
   return (
     <div className="min-h-screen bg-[#fcfcfc] selection:bg-[#4285F4]/20 selection:text-[#4285F4] relative">
       <ScrollToTop />
@@ -39,7 +42,7 @@ const App: React.FC = () => {
           <Route path="*" element={<Home />} />
         </Routes>
       </main>
-      <Footer />
+      {showFooter && <Footer />}
     </div>
   );
 };
