@@ -57,11 +57,11 @@ const getVimeoId = (url: string) => {
   return match ? match[1] : null;
 };
 
-const getGoogleDriveStreamUrl = (url: string) => {
+const getGoogleDrivePreviewUrl = (url: string) => {
   const regExp = /drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/;
   const match = url.match(regExp);
   if (match && match[1]) {
-    return `https://docs.google.com/uc?export=download&id=${match[1]}`;
+    return `https://drive.google.com/file/d/${match[1]}/preview`;
   }
   return null;
 };
@@ -616,8 +616,7 @@ export const PortalPage: React.FC = () => {
 
   const youtubeId = getYoutubeId(activeModule.videoUrl);
   const vimeoId = getVimeoId(activeModule.videoUrl);
-  const driveStreamUrl = getGoogleDriveStreamUrl(activeModule.videoUrl);
-  const videoSrc = driveStreamUrl || activeModule.videoUrl;
+  const drivePreviewUrl = getGoogleDrivePreviewUrl(activeModule.videoUrl);
 
   // Dashboard Main View
   return (
@@ -744,10 +743,17 @@ export const PortalPage: React.FC = () => {
                         allow="autoplay; fullscreen; picture-in-picture"
                         allowFullScreen
                       />
+                    ) : drivePreviewUrl ? (
+                      <iframe
+                        src={drivePreviewUrl}
+                        className="w-full h-full border-0 absolute inset-0"
+                        allow="autoplay; encrypted-media"
+                        allowFullScreen
+                      />
                     ) : (
                       <video
                         ref={videoRef}
-                        src={videoSrc}
+                        src={activeModule.videoUrl}
                         className="w-full h-full object-cover absolute inset-0"
                         onClick={handleVideoPlayToggle}
                         preload="auto"
