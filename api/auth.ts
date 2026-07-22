@@ -32,11 +32,54 @@ if (credentials && credentials.client_email && credentials.private_key) {
   });
 }
 
-// Google Sheets API V4 Helper
-async function sheetsApiRequest(method: string, range: string, body?: any) {
+// Cache sheet title to prevent redundant API queries
+let cachedSheetTitle = "";
+
+async function getSheetTitle(): Promise<string> {
+  if (cachedSheetTitle) return cachedSheetTitle;
+
+  if (!jwtClient || !SPREADSHEET_ID) {
+    throw new Error('Google Sheets Service Account credentials or Spreadsheet ID not configured.');
+  }
+
+  const headers = await jwtClient.getRequestHeaders();
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}?fields=sheets.properties.title`;
+
+  const response = await fetch(url, {
+    method: 'GET',
+    headers
+  });
+
+  if (!response.ok) {
+    const errText = await response.text();
+    throw new Error(`Failed to fetch spreadsheet structure: ${response.status} - ${errText}`);
+  }
+
+  const data = await response.json();
+  const sheets = data.sheets || [];
+  
+  // Look for a tab named "Students" first
+  const studentsTab = sheets.find((s: any) => s.properties?.title === "Students");
+  if (studentsTab) {
+    cachedSheetTitle = "Students";
+  } else if (sheets.length > 0) {
+    // Fallback to the very first tab in the spreadsheet (whatever it is named)
+    cachedSheetTitle = sheets[0].properties?.title || "Sheet1";
+  } else {
+    cachedSheetTitle = "Sheet1";
+  }
+
+  return cachedSheetTitle;
+}
+
+// Google Sheets API V4 Helper (Appends Sheet Title automatically)
+async function sheetsApiRequest(method: string, rangeWithoutSheet: string, body?: any) {
   if (!jwtClient || !SPREADSHEET_ID) {
     throw new Error('Google Sheets Service Account Credentials or Spreadsheet ID (GOOGLE_SPREADSHEET_ID) not configured.');
   }
+
+  const sheetTitle = await getSheetTitle();
+  const range = `${sheetTitle}!${rangeWithoutSheet}`;
 
   const headers = await jwtClient.getRequestHeaders();
   let url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${encodeURIComponent(range)}`;
@@ -113,7 +156,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     try {
       // 1. REGISTER
       if (action === 'register') {
-        const data = await sheetsApiRequest('GET', 'Students!A:J');
+        const data = await sheetsApiRequest('GET', 'A:J');
         const rows = data.values || [];
 
         for (let i = 1; i < rows.length; i++) {
@@ -126,7 +169,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           }
         }
 
-        await sheetsApiRequest('POST', 'Students!A:J', {
+        await sheetsApiRequest('POST', 'A:J', {
           values: [[
             studentId.trim(),
             name.trim(),
@@ -150,7 +193,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       // 2. LOGIN
       if (action === 'login') {
-        const data = await sheetsApiRequest('GET', 'Students!A:J');
+        const data = await sheetsApiRequest('GET', 'A:J');
         const rows = data.values || [];
         const targetId = studentId.trim().toLowerCase();
 
@@ -177,7 +220,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         }
 
         // Update Last Active date
-        await sheetsApiRequest('PUT', `Students!I${studentRowIndex}`, {
+        await sheetsApiRequest('PUT', `I${studentRowIndex}`, {
           values: [[new Date().toISOString()]]
         });
 
@@ -201,7 +244,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       // 3. SYNC MODULES
       if (action === 'sync') {
-        const data = await sheetsApiRequest('GET', 'Students!A:A');
+        const data = await sheetsApiRequest('GET', 'A:A');
         const rows = data.values || [];
         const targetId = studentId.trim().toLowerCase();
         let studentRowIndex = -1;
@@ -218,7 +261,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           return res.status(404).json({ success: false, message: 'Student not found.' });
         }
 
-        await sheetsApiRequest('PUT', `Students!F${studentRowIndex}:I${studentRowIndex}`, {
+        await sheetsApiRequest('PUT', `F${studentRowIndex}:I${studentRowIndex}`, {
           values: [[
             modules[0] ? 'TRUE' : 'FALSE',
             modules[1] ? 'TRUE' : 'FALSE',
@@ -232,7 +275,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       // 4. UPDATE RESUME URL
       if (action === 'update_resume') {
-        const data = await sheetsApiRequest('GET', 'Students!A:A');
+        const data = await sheetsApiRequest('GET', 'A:A');
         const rows = data.values || [];
         const targetId = studentId.trim().toLowerCase();
         let studentRowIndex = -1;
@@ -249,7 +292,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           return res.status(404).json({ success: false, message: 'Student not found.' });
         }
 
-        await sheetsApiRequest('PUT', `Students!I${studentRowIndex}:J${studentRowIndex}`, {
+        await sheetsApiRequest('PUT', `I${studentRowIndex}:J${studentRowIndex}`, {
           values: [[
             new Date().toISOString(),
             resumeLink
