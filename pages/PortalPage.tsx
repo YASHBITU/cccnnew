@@ -216,10 +216,10 @@ export const PortalPage: React.FC = () => {
         setCompletedModules(loadedModules);
         setAuthError('');
       } else {
-        setAuthError(data.message || 'Login failed. Incorrect ID or password.');
+        setAuthError((data.message || 'Login failed. Incorrect ID or password.') + (data.error ? ` Details: ${data.error}` : ''));
       }
-    } catch (err) {
-      setAuthError('Connection error. Please try again.');
+    } catch (err: any) {
+      setAuthError('Connection error. Please try again. Details: ' + err.message);
     } finally {
       setIsLoading(false);
     }
@@ -268,10 +268,10 @@ export const PortalPage: React.FC = () => {
         setCompletedModules([]);
         setAuthError('');
       } else {
-        setAuthError(data.message || 'Registration failed.');
+        setAuthError((data.message || 'Registration failed.') + (data.error ? ` Details: ${data.error}` : ''));
       }
-    } catch (err) {
-      setAuthError('Connection error. Please try again.');
+    } catch (err: any) {
+      setAuthError('Connection error. Please try again. Details: ' + err.message);
     } finally {
       setIsLoading(false);
     }
