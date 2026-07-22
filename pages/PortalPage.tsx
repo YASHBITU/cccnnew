@@ -44,7 +44,6 @@ interface StudentProfile {
   email: string;
   phone: string;
   resumeLink: string;
-  canvaLink?: string;
 }
 
 const getYoutubeId = (url: string) => {
@@ -226,8 +225,7 @@ export const PortalPage: React.FC = () => {
           name: data.student.name,
           email: data.student.email,
           phone: data.student.phone,
-          resumeLink: data.student.resumeLink || '',
-          canvaLink: data.student.canvaLink || ''
+          resumeLink: data.student.resumeLink || ''
         };
         setProfile(loadedProfile);
         localStorage.setItem('ccc_student_profile', JSON.stringify(loadedProfile));
@@ -284,8 +282,7 @@ export const PortalPage: React.FC = () => {
           name: name.trim(),
           email: email.trim(),
           phone: phone.trim(),
-          resumeLink: '',
-          canvaLink: ''
+          resumeLink: ''
         };
         setProfile(loadedProfile);
         localStorage.setItem('ccc_student_profile', JSON.stringify(loadedProfile));
@@ -312,8 +309,7 @@ export const PortalPage: React.FC = () => {
       name: 'Demo Student',
       email: 'demo@ccc.com',
       phone: '+61 412 345 678',
-      resumeLink: 'https://docs.google.com/document/d/1t-8Z-w9jI03o3UeK8k7c7N-N1vX_0l0u/copy',
-      canvaLink: 'https://canva.link/6l4zlfikcjs8owu'
+      resumeLink: 'https://canva.link/6l4zlfikcjs8owu'
     };
     setProfile(loadedProfile);
     localStorage.setItem('ccc_student_profile', JSON.stringify(loadedProfile));
@@ -966,7 +962,7 @@ export const PortalPage: React.FC = () => {
                         <span className="text-[10px] text-purple-600 font-black uppercase tracking-wider">Mentor Assigned</span>
                       </div>
                       <h4 className="font-bold text-slate-900 text-lg leading-snug">Personal Canva Resume Template</h4>
-                      {profile?.canvaLink ? (
+                      {profile?.resumeLink ? (
                         <p className="text-xs text-slate-500 leading-relaxed font-medium">
                           Your custom Canva Resume Template has been shared by your mentor! Use this layout exactly as explained in Session 1.
                         </p>
@@ -977,9 +973,9 @@ export const PortalPage: React.FC = () => {
                       )}
                     </div>
                     
-                    {profile?.canvaLink && (
+                    {profile?.resumeLink && (
                       <button
-                        onClick={() => window.open(profile.canvaLink, '_blank')}
+                        onClick={() => window.open(profile.resumeLink, '_blank')}
                         className="flex items-center gap-2 bg-purple-600 text-white hover:bg-purple-700 px-5 py-3 rounded-xl font-bold text-xs uppercase tracking-widest transition-all whitespace-nowrap shadow-md shadow-purple-600/10 active:scale-[0.98] self-start md:self-auto"
                       >
                         <ExternalLink size={12} />
