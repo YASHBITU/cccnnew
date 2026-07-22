@@ -143,7 +143,7 @@ export const PortalPage: React.FC = () => {
       title: "Module 1: The ATS Resume Blueprint",
       duration: "14:22",
       description: "Learn how to structure your resume to bypass algorithmic scanners (ATS). We cover core keywords alignment, formatting templates, and metrics-driven experience bullet formulations.",
-      videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-software-developer-working-on-code-screen-close-up-41793-large.mp4",
+      videoUrl: "https://drive.google.com/file/d/1UPpmoOQogW-llI1a9W3Vi9kDKfjoL3GC/view?usp=sharing",
       thumbnail: "https://images.unsplash.com/photo-1586281380349-632531db7ed4?q=80&w=640&auto=format&fit=crop"
     },
     {
@@ -151,7 +151,7 @@ export const PortalPage: React.FC = () => {
       title: "Module 2: LinkedIn Magnet Checklist & Positioning",
       duration: "18:45",
       description: "Optimize your profile to attract inbound recruiter queries. Master headlines, summaries that convert, structural setups, and creating strategic posts that highlight engineering value.",
-      videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-man-working-on-his-laptop-at-home-41785-large.mp4",
+      videoUrl: "https://drive.google.com/file/d/1KD0z96AiaAPqs02KAoQ1DE8peDFQeuTu/view?usp=sharing",
       thumbnail: "https://images.unsplash.com/photo-1616469829581-73993eb86b02?q=80&w=640&auto=format&fit=crop"
     },
     {
@@ -159,7 +159,7 @@ export const PortalPage: React.FC = () => {
       title: "Module 3: Direct HR Outreach System & Swipes",
       duration: "21:10",
       description: "Stop submitting portals and directly pitch decision-makers. Build your database of recruiters, schedule outreach messages, handle follow-ups, and convert connections to screening calls.",
-      videoUrl: "https://assets.mixkit.co/videos/preview/mixkit-hands-of-a-developer-typing-on-a-keyboard-40618-large.mp4",
+      videoUrl: "https://drive.google.com/file/d/1vN9hL1tDbeeOwaCHXsmEC_telozT5FJV/view?usp=sharing",
       thumbnail: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=640&auto=format&fit=crop"
     }
   ];
