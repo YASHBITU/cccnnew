@@ -5,26 +5,47 @@ import path from 'path';
 
 // Load Google Service Account credentials
 let credentials: any = null;
+let diagnostics: string[] = [];
 const credPath = path.join(process.cwd(), 'credentials.json');
 
 if (fs.existsSync(credPath)) {
   try {
     credentials = JSON.parse(fs.readFileSync(credPath, 'utf8'));
-  } catch (err) {
+    diagnostics.push('Loaded credentials from local credentials.json');
+  } catch (err: any) {
     console.error('Failed to parse credentials.json:', err);
+    diagnostics.push('Failed to parse credentials.json: ' + err.message);
   }
 } else if (process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL && process.env.GOOGLE_PRIVATE_KEY) {
   let privateKey = process.env.GOOGLE_PRIVATE_KEY.trim();
+  diagnostics.push(`Loading from env. Raw length: ${privateKey.length}`);
+
+  if (privateKey.includes('private_key')) {
+    diagnostics.push('Error: key value contains the string "private_key" (copied full JSON line)');
+  }
+
   if (privateKey.startsWith('"') && privateKey.endsWith('"')) {
     privateKey = privateKey.slice(1, -1);
+    diagnostics.push('Stripped double quotes');
   } else if (privateKey.startsWith("'") && privateKey.endsWith("'")) {
     privateKey = privateKey.slice(1, -1);
+    diagnostics.push('Stripped single quotes');
+  }
+
+  const cleanKey = privateKey.replace(/\\n/g, '\n').trim();
+  if (!cleanKey.startsWith('-----BEGIN PRIVATE KEY-----')) {
+    diagnostics.push(`Bad Header: "${cleanKey.substring(0, 30)}..."`);
+  }
+  if (!cleanKey.endsWith('-----END PRIVATE KEY-----')) {
+    diagnostics.push(`Bad Footer: "...${cleanKey.substring(cleanKey.length - 30)}"`);
   }
 
   credentials = {
     client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-    private_key: privateKey.replace(/\\n/g, '\n'),
+    private_key: cleanKey,
   };
+} else {
+  diagnostics.push('No Service Account credentials found (env keys or file missing)');
 }
 
 const SPREADSHEET_ID = process.env.GOOGLE_SPREADSHEET_ID || process.env.VITE_GOOGLE_SPREADSHEET_ID;
@@ -324,7 +345,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(500).json({
         success: false,
         message: 'Google Sheets direct API error occurred.',
-        error: error.message
+        error: error.message,
+        diagnostics: diagnostics
       });
     }
   }
