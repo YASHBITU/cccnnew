@@ -542,17 +542,12 @@ export const PortalPage: React.FC = () => {
               <span className="bg-[#4285F4]/10 text-[#4285F4] border border-[#4285F4]/15 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-1">
                 <Sparkles size={10} className="animate-pulse" /> CCC Career Academy
               </span>
-              <button 
-                onClick={() => setShowSheetsModal(true)}
-                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all ${
-                  isLiveSheet 
-                    ? 'bg-emerald-50 text-emerald-600 border-emerald-200 hover:bg-emerald-100' 
-                    : 'bg-amber-50 text-amber-600 border-amber-200 hover:bg-amber-100'
-                }`}
+              <span 
+                className="bg-emerald-50 text-emerald-600 border border-emerald-200/60 px-3.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5"
               >
-                <span className={`w-1.5 h-1.5 rounded-full ${isLiveSheet ? 'bg-emerald-500' : 'bg-amber-500 animate-pulse'}`} />
-                {isLiveSheet ? 'Google Sheet Active' : 'Sheets: Mock Mode (Setup)'}
-              </button>
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                Verified Student
+              </span>
             </div>
             <h1 className="text-4xl md:text-5xl font-black tracking-tight text-slate-900">Job Hunt Curriculum</h1>
             {profile && (
@@ -1102,7 +1097,7 @@ export const PortalPage: React.FC = () => {
 
       {/* Google Sheets Live Integration Configuration Modal */}
       <AnimatePresence>
-        {showSheetsModal && (
+        {false && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
