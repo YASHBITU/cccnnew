@@ -148,19 +148,19 @@ export const PortalPage: React.FC = () => {
     },
     {
       id: 2,
-      title: "Module 2: LinkedIn Magnet Checklist & Positioning",
-      duration: "18:45",
-      description: "Optimize your profile to attract inbound recruiter queries. Master headlines, summaries that convert, structural setups, and creating strategic posts that highlight engineering value.",
-      videoUrl: "https://drive.google.com/file/d/1KD0z96AiaAPqs02KAoQ1DE8peDFQeuTu/view?usp=sharing",
-      thumbnail: "https://images.unsplash.com/photo-1616469829581-73993eb86b02?q=80&w=640&auto=format&fit=crop"
-    },
-    {
-      id: 3,
-      title: "Module 3: Direct HR Outreach System & Swipes",
+      title: "Module 2: Direct HR Outreach System & Swipes",
       duration: "21:10",
       description: "Stop submitting portals and directly pitch decision-makers. Build your database of recruiters, schedule outreach messages, handle follow-ups, and convert connections to screening calls.",
       videoUrl: "https://drive.google.com/file/d/1vN9hL1tDbeeOwaCHXsmEC_telozT5FJV/view?usp=sharing",
       thumbnail: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=640&auto=format&fit=crop"
+    },
+    {
+      id: 3,
+      title: "Module 3: LinkedIn Magnet Checklist & Positioning",
+      duration: "18:45",
+      description: "Optimize your profile to attract inbound recruiter queries. Master headlines, summaries that convert, structural setups, and creating strategic posts that highlight engineering value.",
+      videoUrl: "https://drive.google.com/file/d/1KD0z96AiaAPqs02KAoQ1DE8peDFQeuTu/view?usp=sharing",
+      thumbnail: "https://images.unsplash.com/photo-1616469829581-73993eb86b02?q=80&w=640&auto=format&fit=crop"
     }
   ];
 
