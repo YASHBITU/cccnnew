@@ -127,21 +127,21 @@ export const PortalPage: React.FC = () => {
       {
         id: '1',
         title: 'ATS-Friendly Google Docs Resume Template',
-        url: 'https://docs.google.com/document/d/1t-8Z-w9jI03o3UeK8k7c7N-N1vX_0l0u/copy',
+        url: 'https://drive.google.com/file/d/1_U6C3Zmw_2TbeJhHSF7eztUGzLNkXccl/view?usp=sharing',
         description: 'Recruiter-optimized structural layouts matching single and double column specifications.',
         category: 'Templates'
       },
       {
         id: '2',
         title: 'LinkedIn Positioning & Outreach Swipe File',
-        url: 'https://docs.google.com/spreadsheets/d/1X-uG9-N0T5p3c0eK9k7c7N-N1vX_0l0u/copy',
+        url: 'https://drive.google.com/file/d/1wyNLCdhdGJ74X2o4L5duVhpW1VuXfOZi/view?usp=sharing',
         description: 'Ready-to-use template messages, connection request scripts, and email follow-ups for cold networking.',
         category: 'Swipe Files'
       },
       {
         id: '3',
         title: '15-Day Job Search Action Matrix Checklist',
-        url: 'https://docs.google.com/spreadsheets/d/1g-H9-N0T5p3c0eK9k7c7N-N1vX_0l0u/copy',
+        url: 'https://drive.google.com/file/d/1Sz0Lcr4Bkt4thdzJYl9hwWnKR2xXp0dm/view?usp=sharing',
         description: 'A day-by-day step matrix mapping exactly how to perform targeted applications and check tasks.',
         category: 'Guides'
       }
@@ -895,72 +895,25 @@ export const PortalPage: React.FC = () => {
               </div>
 
               <div className="space-y-6">
-                <div className="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm">
-                  <h4 className="font-black text-slate-900 text-md uppercase tracking-wider mb-2 flex items-center gap-2">
-                    <LinkIcon size={16} className="text-[#4285F4]" />
-                    Share a Link / Bookmark
+                {/* Study Tips Card */}
+                <div className="bg-gradient-to-br from-slate-950 to-slate-800 border border-slate-700/50 rounded-2xl p-6 shadow-xl text-white">
+                  <h4 className="font-black text-white text-sm uppercase tracking-widest mb-3 flex items-center gap-2">
+                    <BookOpen size={16} className="text-[#4285F4]" />
+                    Pro Tips from CCC
                   </h4>
-                  <p className="text-xs text-slate-500 mb-5 leading-relaxed">
-                    Need to bookmark a resource or share an application portal? Add custom items below to build your custom job-hunt folder.
-                  </p>
-
-                  <form onSubmit={handleAddLink} className="space-y-4">
-                    <div>
-                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Resource Name *</label>
-                      <input 
-                        type="text" 
-                        required
-                        placeholder="e.g. My Target Companies Spreadsheet"
-                        value={newLinkTitle}
-                        onChange={(e) => setNewLinkTitle(e.target.value)}
-                        className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-xs font-semibold focus:outline-none focus:border-[#4285F4] focus:ring-1 focus:ring-[#4285F4] transition-all"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Destination URL *</label>
-                      <input 
-                        type="text" 
-                        required
-                        placeholder="e.g. drive.google.com/..."
-                        value={newLinkUrl}
-                        onChange={(e) => setNewLinkUrl(e.target.value)}
-                        className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-xs font-semibold focus:outline-none focus:border-[#4285F4] focus:ring-1 focus:ring-[#4285F4] transition-all"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Category</label>
-                      <select
-                        value={newLinkCategory}
-                        onChange={(e) => setNewLinkCategory(e.target.value)}
-                        className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-xs font-semibold focus:outline-none focus:border-[#4285F4] focus:ring-1 focus:ring-[#4285F4] transition-all"
-                      >
-                        <option value="Templates">Templates</option>
-                        <option value="Swipe Files">Swipe Files</option>
-                        <option value="Guides">Guides</option>
-                        <option value="Tools">Tools</option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Description (Optional)</label>
-                      <textarea 
-                        placeholder="Provide details about this folder or link..."
-                        value={newLinkDesc}
-                        onChange={(e) => setNewLinkDesc(e.target.value)}
-                        rows={2}
-                        className="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-xs font-semibold focus:outline-none focus:border-[#4285F4] focus:ring-1 focus:ring-[#4285F4] transition-all resize-none"
-                      />
-                    </div>
-
-                    <button
-                      type="submit"
-                      className="w-full bg-[#4285F4] text-white py-3.5 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-[#3b78e7] transition-all active:scale-[0.98] flex items-center justify-center gap-1.5 shadow-md shadow-[#4285F4]/10"
-                    >
-                      <Plus size={14} /> Add to Library
-                    </button>
-                  </form>
+                  <ul className="space-y-2.5">
+                    {[
+                      '📌 Apply to at least 20–30 targeted roles daily using the job hunt strategy.',
+                      '🔗 Personalize every connection request — never send blank requests.',
+                      '📝 Keep updating your resume after every mentor review session.',
+                      '📊 Track your applications in a spreadsheet to stay organized.',
+                      '⚡ Respond to recruiter messages within the same day for best results.',
+                    ].map((tip, i) => (
+                      <li key={i} className="text-xs text-slate-300 font-medium leading-relaxed flex items-start gap-2">
+                        <span>{tip}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               </div>
             </motion.div>
@@ -976,40 +929,49 @@ export const PortalPage: React.FC = () => {
               className="max-w-2xl mx-auto"
             >
               <div className="bg-white border border-slate-100 rounded-[2.5rem] p-8 md:p-12 shadow-sm text-center relative overflow-hidden">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-purple-50/50 blur-[80px] rounded-full -z-10" />
+                {/* Decorative background glows */}
+                <div className="absolute -top-16 left-1/2 -translate-x-1/2 w-80 h-80 bg-purple-200/30 blur-[100px] rounded-full pointer-events-none" />
+                <div className="absolute bottom-0 right-0 w-48 h-48 bg-indigo-200/20 blur-[80px] rounded-full pointer-events-none" />
 
-                <div className="w-14 h-14 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                  <Layout size={24} />
-                </div>
+                <div className="relative">
+                  <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl shadow-purple-500/30">
+                    <Layout size={28} />
+                  </div>
 
-                <h3 className="text-2xl md:text-3xl font-black tracking-tight text-slate-900 mb-2">Your Canva Template</h3>
-                <p className="text-slate-500 text-sm max-w-md mx-auto mb-8 font-medium leading-relaxed">
-                  Access your personalized Canva Resume Template directly. Open the workspace to edit your CV and apply the strategies learned in Session 1.
-                </p>
+                  <h3 className="text-2xl md:text-3xl font-black tracking-tight text-slate-900 mb-2">Your Canva Template</h3>
+                  <p className="text-slate-500 text-sm max-w-md mx-auto mb-8 font-medium leading-relaxed">
+                    Access your personalized Canva Resume Template directly. Open the workspace to edit your CV and apply the strategies learned in Session 1.
+                  </p>
 
-                {profile?.resumeLink ? (
-                  <div className="space-y-6">
-                    <div className="bg-purple-50/40 border border-purple-100/50 rounded-2xl p-5 max-w-md mx-auto text-left">
-                      <span className="block text-[9px] font-black text-purple-500 uppercase tracking-widest mb-1.5">Linked Template Link</span>
-                      <p className="text-xs font-bold text-slate-700 break-all select-all">{profile.resumeLink}</p>
+                  {profile?.resumeLink ? (
+                    <div className="space-y-6">
+                      <div className="bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-100 rounded-2xl p-5 max-w-md mx-auto text-left">
+                        <span className="block text-[9px] font-black text-purple-500 uppercase tracking-widest mb-1.5">Your Assigned Template</span>
+                        <p className="text-xs font-bold text-slate-700 break-all select-all font-mono">{profile.resumeLink}</p>
+                      </div>
+
+                      <button
+                        onClick={() => window.open(profile.resumeLink, '_blank')}
+                        className="relative group inline-flex items-center justify-center gap-3 px-10 py-4 rounded-2xl font-black text-sm uppercase tracking-widest transition-all duration-300 active:scale-[0.97] shadow-2xl shadow-purple-600/30 overflow-hidden bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 text-white hover:shadow-purple-600/50 hover:shadow-2xl"
+                        style={{backgroundSize: '200% auto'}}
+                      >
+                        {/* Shimmer effect */}
+                        <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+                        <ExternalLink size={16} className="relative" />
+                        <span className="relative">Open in Canva</span>
+                      </button>
+
+                      <p className="text-xs text-slate-400 font-medium">Opens in a new tab → Edit, customize, and download your resume from Canva.</p>
                     </div>
-
-                    <button
-                      onClick={() => window.open(profile.resumeLink, '_blank')}
-                      className="bg-purple-600 text-white px-8 py-4.5 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-purple-700 transition-all active:scale-[0.98] shadow-xl shadow-purple-600/20 flex items-center justify-center gap-2 mx-auto"
-                    >
-                      <ExternalLink size={14} />
-                      Open in Canva
-                    </button>
-                  </div>
-                ) : (
-                  <div className="bg-amber-50 border border-amber-200/50 rounded-2xl p-6 max-w-md mx-auto text-center space-y-2">
-                    <h5 className="font-bold text-amber-800 text-sm">No Template Assigned</h5>
-                    <p className="text-xs text-amber-700 leading-relaxed font-medium">
-                      ⚠️ Your personalized Canva template has not been linked to your student profile yet. Your mentor will update it here soon.
-                    </p>
-                  </div>
-                )}
+                  ) : (
+                    <div className="bg-amber-50 border border-amber-200/50 rounded-2xl p-6 max-w-md mx-auto text-center space-y-2">
+                      <h5 className="font-bold text-amber-800 text-sm">No Template Assigned</h5>
+                      <p className="text-xs text-amber-700 leading-relaxed font-medium">
+                        ⚠️ Your personalized Canva template has not been linked to your student profile yet. Your mentor will update it here soon.
+                      </p>
+                    </div>
+                  )}
+                </div>
               </div>
             </motion.div>
           )}

@@ -88,15 +88,7 @@ export const Navbar: React.FC = () => {
           ))}
         </div>
 
-        {/* Action Button - Right Aligned */}
-        <div className="hidden md:block">
-          <button
-            onClick={() => handleNavClick('/pricing')}
-            className="bg-slate-950 text-white text-[9px] font-black uppercase tracking-[0.2em] px-7 py-3 rounded-full hover:bg-[#4285F4] transition-all shadow-xl shadow-slate-200 active:scale-95"
-          >
-            Get Started
-          </button>
-        </div>
+
 
         {/* Mobile Menu Toggle */}
         <button
@@ -134,19 +126,7 @@ export const Navbar: React.FC = () => {
                 </motion.button>
               ))}
 
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9, y: 30 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="mt-8"
-              >
-                <button
-                  onClick={() => handleNavClick('/pricing')}
-                  className="w-full bg-[#4285F4] text-white font-black text-lg uppercase tracking-widest py-5 rounded-2xl shadow-2xl shadow-[#4285F4]/30 active:scale-95 transition-all outline-none"
-                >
-                  Get Started
-                </button>
-              </motion.div>
+
             </div>
 
             {/* Background Branding Elements for Mobile Menu */}
