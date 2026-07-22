@@ -551,8 +551,14 @@ export const PortalPage: React.FC = () => {
             </div>
             <h1 className="text-4xl md:text-5xl font-black tracking-tight text-slate-900">Job Hunt Curriculum</h1>
             {profile && (
-              <p className="text-slate-500 text-sm font-semibold mt-2">
-                Student: <span className="text-slate-800 font-black">{profile.name}</span> (ID: {profile.studentId}) | Email: {profile.email} | Phone: {profile.phone}
+              <p className="text-slate-500 text-sm font-semibold mt-2 flex flex-wrap items-center gap-x-2 gap-y-1">
+                <span>Student:</span> <span className="text-slate-800 font-black">{profile.name}</span>
+                <span className="text-slate-300 font-normal">|</span>
+                <span>Student ID:</span> <span className="text-slate-800 font-bold">{profile.studentId}</span>
+                <span className="text-slate-300 font-normal">|</span>
+                <span>Email:</span> <span className="text-slate-800 font-bold">{profile.email}</span>
+                <span className="text-slate-300 font-normal">|</span>
+                <span>Phone:</span> <span className="text-slate-800 font-bold">{profile.phone}</span>
               </p>
             )}
           </div>
@@ -738,44 +744,6 @@ export const PortalPage: React.FC = () => {
                   <p className="text-slate-500 text-sm leading-relaxed">{activeModule.description}</p>
                 </div>
 
-                {/* Personal Student-Specific Resume URL Card */}
-                <div className="bg-white border border-slate-100 rounded-[2rem] p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
-                  <div className="space-y-1 flex-grow">
-                    <div className="flex items-center gap-2">
-                      <span className="bg-indigo-50 text-indigo-600 text-[9px] font-black uppercase px-2 py-0.5 rounded tracking-wider">
-                        My Drafts
-                      </span>
-                      <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Student-Specific File</span>
-                    </div>
-                    <h4 className="font-bold text-slate-900 text-lg leading-snug">Personal Resume Workspace</h4>
-                    {profile?.resumeLink ? (
-                      <p className="text-xs text-slate-500 font-semibold truncate max-w-md">
-                        Linked to: <a href={profile.resumeLink} target="_blank" rel="noopener noreferrer" className="text-[#4285F4] hover:underline font-bold flex inline-flex items-center gap-1">{profile.resumeLink} <ExternalLink size={10} /></a>
-                      </p>
-                    ) : (
-                      <p className="text-xs text-amber-500 font-bold">
-                        ⚠️ No resume link added yet. Paste your Google Doc link below.
-                      </p>
-                    )}
-                  </div>
-
-                  <form onSubmit={handleUpdateResume} className="flex items-center gap-3 w-full md:w-auto">
-                    <input
-                      type="text"
-                      placeholder="Paste Google Doc / Resume link"
-                      value={resumeUrlInput}
-                      onChange={(e) => setResumeUrlInput(e.target.value)}
-                      className="px-4 py-2.5 bg-slate-50 border border-slate-200/80 rounded-xl text-xs font-semibold focus:outline-none focus:border-[#4285F4] focus:ring-1 focus:ring-[#4285F4] w-full md:w-60"
-                    />
-                    <button
-                      type="submit"
-                      disabled={isLoading}
-                      className="bg-[#4285F4] text-white hover:bg-[#3b78e7] px-4 py-2.5 rounded-xl font-black text-xs uppercase tracking-widest transition-all whitespace-nowrap active:scale-[0.98] shadow-md shadow-[#4285F4]/10"
-                    >
-                      {profile?.resumeLink ? 'Update' : 'Link File'}
-                    </button>
-                  </form>
-                </div>
               </div>
 
               {/* Right Column: Module playlist navigation */}
@@ -819,15 +787,16 @@ export const PortalPage: React.FC = () => {
                   })}
                 </div>
 
-                <div className="bg-[#4285F4]/5 border border-[#4285F4]/10 rounded-2xl p-5 mt-6">
-                  <h5 className="font-bold text-slate-900 text-sm mb-1">Need help with templates?</h5>
-                  <p className="text-xs text-slate-500 mb-3">Head over to the Resources tab to duplicate our custom Google Docs and swipe files.</p>
-                  <button 
-                    onClick={() => setActiveTab('resources')}
-                    className="text-xs text-[#4285F4] font-bold flex items-center gap-1 hover:underline"
-                  >
-                    Go to Resources <ChevronRight size={12} />
-                  </button>
+                {/* Important Instructions Disclaimer */}
+                <div className="bg-amber-50/60 border border-amber-200/50 rounded-2xl p-5 mt-6">
+                  <h5 className="font-bold text-amber-800 text-sm mb-1.5 flex items-center gap-1.5">
+                    ⚠️ Important Instructions
+                  </h5>
+                  <ul className="text-xs text-amber-700 space-y-1.5 list-disc pl-4 font-medium leading-relaxed">
+                    <li>Watch the complete session video carefully without skipping.</li>
+                    <li>Take active notes during lectures to implement strategies effectively.</li>
+                    <li>Perform all tasks step-by-step with focus on quality over speed.</li>
+                  </ul>
                 </div>
               </div>
             </motion.div>
@@ -926,22 +895,6 @@ export const PortalPage: React.FC = () => {
               </div>
 
               <div className="space-y-6">
-                <div className="bg-gradient-to-br from-[#4285F4]/5 to-indigo-50/50 border border-[#4285F4]/10 rounded-2xl p-6 shadow-sm">
-                  <h5 className="font-bold text-slate-900 text-sm mb-1.5 flex items-center gap-2">
-                    <Calendar size={16} className="text-[#4285F4]" />
-                    Book 1-on-1 Review
-                  </h5>
-                  <p className="text-xs text-slate-500 mb-4 leading-relaxed font-medium">
-                    Optimize your LinkedIn headlines and review your drafts live with your mentor Zoom link.
-                  </p>
-                  <button 
-                    onClick={() => window.open('https://calendly.com', '_blank')}
-                    className="w-full bg-[#4285F4] text-white hover:bg-[#3b78e7] py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 shadow-md shadow-[#4285F4]/10 active:scale-[0.98]"
-                  >
-                    Schedule Call <ExternalLink size={10} />
-                  </button>
-                </div>
-
                 <div className="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm">
                   <h4 className="font-black text-slate-900 text-md uppercase tracking-wider mb-2 flex items-center gap-2">
                     <LinkIcon size={16} className="text-[#4285F4]" />
@@ -1020,72 +973,41 @@ export const PortalPage: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -15 }}
               transition={{ duration: 0.4 }}
-              className="space-y-6"
+              className="max-w-2xl mx-auto"
             >
-              <div className="bg-white border border-slate-100 rounded-[2.5rem] p-6 md:p-8 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
-                <div className="space-y-1 flex-grow">
-                  <div className="flex items-center gap-3">
-                    <span className="bg-purple-100 text-purple-700 text-[9px] font-black uppercase px-2 py-0.5 rounded tracking-wider">
-                      Canva Template Workspace
-                    </span>
-                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Active Workspace</span>
-                  </div>
-                  <h4 className="font-bold text-slate-900 text-lg leading-snug">Personal Canva Resume Template</h4>
-                  {profile?.resumeLink ? (
-                    <p className="text-xs text-slate-500 font-semibold truncate max-w-xl">
-                      Template URL: <a href={profile.resumeLink} target="_blank" rel="noopener noreferrer" className="text-[#4285F4] hover:underline font-bold inline-flex items-center gap-1">{profile.resumeLink} <ExternalLink size={10} /></a>
-                    </p>
-                  ) : (
-                    <p className="text-xs text-amber-500 font-bold">
-                      ⚠️ No Canva template link assigned to your profile yet.
-                    </p>
-                  )}
+              <div className="bg-white border border-slate-100 rounded-[2.5rem] p-8 md:p-12 shadow-sm text-center relative overflow-hidden">
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-purple-50/50 blur-[80px] rounded-full -z-10" />
+
+                <div className="w-14 h-14 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                  <Layout size={24} />
                 </div>
 
-                <div className="flex items-center gap-3 w-full md:w-auto">
-                  {profile?.resumeLink && (
-                    <button
-                      onClick={() => window.open(profile.resumeLink, '_blank')}
-                      className="bg-purple-600 hover:bg-purple-700 text-white px-5 py-3 rounded-xl font-bold text-xs uppercase tracking-widest transition-all whitespace-nowrap active:scale-[0.98] shadow-md shadow-purple-600/10 flex items-center gap-1.5"
-                    >
-                      <ExternalLink size={12} /> Open in Canva
-                    </button>
-                  )}
-                </div>
-              </div>
-
-              {/* Embedding Canva iframe view */}
-              <div className="bg-white border border-slate-100 rounded-[2.5rem] p-6 shadow-sm space-y-4">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <div>
-                    <h5 className="font-bold text-slate-900 text-sm">Interactive Resume View</h5>
-                    <p className="text-xs text-slate-500 mt-0.5">Edit in Canva and watch the live preview synchronize below.</p>
-                  </div>
-                  <div className="text-xs font-semibold text-slate-400 bg-slate-50 border border-slate-100 px-3 py-1 rounded-lg">
-                    Real-time Embed
-                  </div>
-                </div>
+                <h3 className="text-2xl md:text-3xl font-black tracking-tight text-slate-900 mb-2">Your Canva Template</h3>
+                <p className="text-slate-500 text-sm max-w-md mx-auto mb-8 font-medium leading-relaxed">
+                  Access your personalized Canva Resume Template directly. Open the workspace to edit your CV and apply the strategies learned in Session 1.
+                </p>
 
                 {profile?.resumeLink ? (
-                  <div className="w-full aspect-[4/3] bg-slate-50 border border-slate-100 rounded-3xl overflow-hidden relative shadow-inner flex flex-col items-center justify-center">
-                    <iframe 
-                      src={getEmbedUrl(profile.resumeLink)} 
-                      className="w-full h-full border-none rounded-3xl"
-                      allowFullScreen
-                      title="Canva Resume Template Preview"
-                    />
-                    <div className="absolute bottom-4 left-4 right-4 bg-slate-950/80 backdrop-blur-md px-4 py-2.5 rounded-2xl text-[10px] text-slate-300 font-semibold flex items-center justify-between pointer-events-none">
-                      <span>If your template doesn't render, open it directly using the button above.</span>
-                      <span className="font-black text-white">Canva Workspace</span>
+                  <div className="space-y-6">
+                    <div className="bg-purple-50/40 border border-purple-100/50 rounded-2xl p-5 max-w-md mx-auto text-left">
+                      <span className="block text-[9px] font-black text-purple-500 uppercase tracking-widest mb-1.5">Linked Template Link</span>
+                      <p className="text-xs font-bold text-slate-700 break-all select-all">{profile.resumeLink}</p>
                     </div>
+
+                    <button
+                      onClick={() => window.open(profile.resumeLink, '_blank')}
+                      className="bg-purple-600 text-white px-8 py-4.5 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-purple-700 transition-all active:scale-[0.98] shadow-xl shadow-purple-600/20 flex items-center justify-center gap-2 mx-auto"
+                    >
+                      <ExternalLink size={14} />
+                      Open in Canva
+                    </button>
                   </div>
                 ) : (
-                  <div className="w-full aspect-[16/9] bg-slate-50 border border-dashed border-slate-200 rounded-3xl flex flex-col items-center justify-center p-8 text-center">
-                    <div className="w-12 h-12 bg-slate-100 text-slate-400 rounded-2xl flex items-center justify-center mb-3">
-                      <Layout size={20} />
-                    </div>
-                    <h5 className="font-bold text-slate-900 text-sm">No Template Assigned</h5>
-                    <p className="text-xs text-slate-400 max-w-sm mt-1">Once your mentor links your Canva Resume Template inside the Google Sheet database, it will display here automatically.</p>
+                  <div className="bg-amber-50 border border-amber-200/50 rounded-2xl p-6 max-w-md mx-auto text-center space-y-2">
+                    <h5 className="font-bold text-amber-800 text-sm">No Template Assigned</h5>
+                    <p className="text-xs text-amber-700 leading-relaxed font-medium">
+                      ⚠️ Your personalized Canva template has not been linked to your student profile yet. Your mentor will update it here soon.
+                    </p>
                   </div>
                 )}
               </div>
