@@ -1117,15 +1117,19 @@ export const PortalPage: React.FC = () => {
                       </p>
                       <div className="bg-slate-950 p-4 rounded-xl mt-2 font-mono text-[9px] text-slate-300 max-h-40 overflow-y-auto select-all relative group">
                         <pre>{`function doPost(e) {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName("Students") || ss.getSheets()[0];
   var data = JSON.parse(e.postData.contents);
   var action = data.action;
   var rows = sheet.getDataRange().getValues();
   
   if (action === 'register') {
     for (var i = 1; i < rows.length; i++) {
-      if (rows[i][0].toString().toLowerCase() === data.studentId.toString().toLowerCase() ||
-          rows[i][2].toString().toLowerCase() === data.email.toString().toLowerCase()) {
+      var cellId = rows[i][0] ? rows[i][0].toString().trim().toLowerCase() : "";
+      var cellEmail = rows[i][2] ? rows[i][2].toString().trim().toLowerCase() : "";
+      
+      if ((cellId && cellId === data.studentId.toString().trim().toLowerCase()) ||
+          (cellEmail && cellEmail === data.email.toString().trim().toLowerCase())) {
         return ContentService.createTextOutput(JSON.stringify({ success: false, message: 'Student ID or Email already exists.' })).setMimeType(ContentService.MimeType.JSON);
       }
     }
@@ -1135,12 +1139,16 @@ export const PortalPage: React.FC = () => {
   
   if (action === 'login') {
     for (var i = 1; i < rows.length; i++) {
-      if (rows[i][0].toString().toLowerCase() === data.studentId.toString().toLowerCase() || rows[i][2].toString().toLowerCase() === data.studentId.toString().toLowerCase()) {
+      var cellId = rows[i][0] ? rows[i][0].toString().trim().toLowerCase() : "";
+      var cellEmail = rows[i][2] ? rows[i][2].toString().trim().toLowerCase() : "";
+      var targetId = data.studentId.toString().trim().toLowerCase();
+      
+      if ((cellId && cellId === targetId) || (cellEmail && cellEmail === targetId)) {
         if (rows[i][4].toString() === data.password.toString()) {
           sheet.getRange(i + 1, 9).setValue(new Date());
           return ContentService.createTextOutput(JSON.stringify({
             success: true,
-            student: { studentId: rows[i][0], name: rows[i][1], email: rows[i][2], phone: rows[i][3], modules: [rows[i][5], rows[i][6], rows[i][7]], resumeLink: rows[i][9] || '' }
+            student: { studentId: rows[i][0], name: rows[i][1], email: rows[i][2], phone: rows[i][3], modules: [rows[i][5] === true, rows[i][6] === true, rows[i][7] === true], resumeLink: rows[i][9] || '' }
           })).setMimeType(ContentService.MimeType.JSON);
         } else {
           return ContentService.createTextOutput(JSON.stringify({ success: false, message: 'Incorrect password.' })).setMimeType(ContentService.MimeType.JSON);
@@ -1152,7 +1160,8 @@ export const PortalPage: React.FC = () => {
 
   if (action === 'sync') {
     for (var i = 1; i < rows.length; i++) {
-      if (rows[i][0].toString().toLowerCase() === data.studentId.toString().toLowerCase()) {
+      var cellId = rows[i][0] ? rows[i][0].toString().trim().toLowerCase() : "";
+      if (cellId && cellId === data.studentId.toString().trim().toLowerCase()) {
         sheet.getRange(i + 1, 6).setValue(data.modules[0]);
         sheet.getRange(i + 1, 7).setValue(data.modules[1]);
         sheet.getRange(i + 1, 8).setValue(data.modules[2]);
@@ -1164,7 +1173,8 @@ export const PortalPage: React.FC = () => {
 
   if (action === 'update_resume') {
     for (var i = 1; i < rows.length; i++) {
-      if (rows[i][0].toString().toLowerCase() === data.studentId.toString().toLowerCase()) {
+      var cellId = rows[i][0] ? rows[i][0].toString().trim().toLowerCase() : "";
+      if (cellId && cellId === data.studentId.toString().trim().toLowerCase()) {
         sheet.getRange(i + 1, 10).setValue(data.resumeLink);
         sheet.getRange(i + 1, 9).setValue(new Date());
         return ContentService.createTextOutput(JSON.stringify({ success: true })).setMimeType(ContentService.MimeType.JSON);
