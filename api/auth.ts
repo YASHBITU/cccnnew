@@ -1,9 +1,70 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { JWT } from 'google-auth-library';
+import fs from 'fs';
+import path from 'path';
 
-// We fetch the Google Apps Script Web App URL from environment variables
-const GOOGLE_SCRIPT_URL = process.env.GOOGLE_SCRIPT_URL || process.env.VITE_GOOGLE_SCRIPT_URL;
+// Load Google Service Account credentials
+let credentials: any = null;
+const credPath = path.join(process.cwd(), 'credentials.json');
 
-// Simple in-memory mock database fallback for local testing when GOOGLE_SCRIPT_URL is not set
+if (fs.existsSync(credPath)) {
+  try {
+    credentials = JSON.parse(fs.readFileSync(credPath, 'utf8'));
+  } catch (err) {
+    console.error('Failed to parse credentials.json:', err);
+  }
+} else if (process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL && process.env.GOOGLE_PRIVATE_KEY) {
+  credentials = {
+    client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+    private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+  };
+}
+
+const SPREADSHEET_ID = process.env.GOOGLE_SPREADSHEET_ID || process.env.VITE_GOOGLE_SPREADSHEET_ID;
+
+// Initialize JWT Client for Google Sheets API v4
+let jwtClient: JWT | null = null;
+if (credentials && credentials.client_email && credentials.private_key) {
+  jwtClient = new JWT({
+    email: credentials.client_email,
+    key: credentials.private_key,
+    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+  });
+}
+
+// Google Sheets API V4 Helper
+async function sheetsApiRequest(method: string, range: string, body?: any) {
+  if (!jwtClient || !SPREADSHEET_ID) {
+    throw new Error('Google Sheets Service Account Credentials or Spreadsheet ID (GOOGLE_SPREADSHEET_ID) not configured.');
+  }
+
+  const headers = await jwtClient.getRequestHeaders();
+  let url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${encodeURIComponent(range)}`;
+  
+  if (method === 'POST') {
+    url += ':append?valueInputOption=USER_ENTERED';
+  } else if (method === 'PUT') {
+    url += '?valueInputOption=USER_ENTERED';
+  }
+
+  const response = await fetch(url, {
+    method,
+    headers: {
+      ...headers,
+      'Content-Type': 'application/json',
+    },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Google Sheets API error: ${response.status} - ${errorText}`);
+  }
+
+  return response.json();
+}
+
+// Local mock database in case credentials/sheets are not configured yet
 interface MockStudent {
   studentId: string;
   name: string;
@@ -27,7 +88,7 @@ const mockDb: MockStudent[] = [
 ];
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  // Set CORS headers
+  // CORS Headers
   res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
@@ -46,34 +107,171 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const { action, studentId, name, email, phone, password, modules, resumeLink } = req.body;
 
-  // If Google Sheet Apps Script URL is configured, proxy the request to it
-  if (GOOGLE_SCRIPT_URL) {
-    try {
-      const response = await fetch(GOOGLE_SCRIPT_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(req.body),
-      });
+  const hasSheets = jwtClient && SPREADSHEET_ID;
 
-      if (!response.ok) {
-        throw new Error(`Google Script returned status: ${response.status}`);
+  if (hasSheets) {
+    try {
+      // 1. REGISTER
+      if (action === 'register') {
+        const data = await sheetsApiRequest('GET', 'Students!A:J');
+        const rows = data.values || [];
+
+        for (let i = 1; i < rows.length; i++) {
+          const cellId = rows[i][0] ? rows[i][0].toString().trim().toLowerCase() : "";
+          const cellEmail = rows[i][2] ? rows[i][2].toString().trim().toLowerCase() : "";
+          
+          if ((cellId && cellId === studentId.trim().toLowerCase()) || 
+              (cellEmail && cellEmail === email.trim().toLowerCase())) {
+            return res.status(400).json({ success: false, message: 'Student ID or Email already exists in Google Sheet.' });
+          }
+        }
+
+        await sheetsApiRequest('POST', 'Students!A:J', {
+          values: [[
+            studentId.trim(),
+            name.trim(),
+            email.trim(),
+            phone.trim(),
+            password.trim(),
+            'FALSE',
+            'FALSE',
+            'FALSE',
+            new Date().toISOString(),
+            ''
+          ]]
+        });
+
+        return res.status(200).json({
+          success: true,
+          message: 'Student registered successfully in Google Sheet.',
+          isLiveSheet: true
+        });
       }
 
-      const result = await response.json();
-      return res.status(200).json({ ...result, isLiveSheet: true });
+      // 2. LOGIN
+      if (action === 'login') {
+        const data = await sheetsApiRequest('GET', 'Students!A:J');
+        const rows = data.values || [];
+        const targetId = studentId.trim().toLowerCase();
+
+        let studentRowIndex = -1;
+        let studentData: any = null;
+
+        for (let i = 1; i < rows.length; i++) {
+          const cellId = rows[i][0] ? rows[i][0].toString().trim().toLowerCase() : "";
+          const cellEmail = rows[i][2] ? rows[i][2].toString().trim().toLowerCase() : "";
+
+          if ((cellId && cellId === targetId) || (cellEmail && cellEmail === targetId)) {
+            if (rows[i][4] && rows[i][4].toString() === password.toString()) {
+              studentRowIndex = i + 1;
+              studentData = rows[i];
+              break;
+            } else {
+              return res.status(401).json({ success: false, message: 'Incorrect password.' });
+            }
+          }
+        }
+
+        if (studentRowIndex === -1) {
+          return res.status(404).json({ success: false, message: 'Student not found in Google Sheet.' });
+        }
+
+        // Update Last Active date
+        await sheetsApiRequest('PUT', `Students!I${studentRowIndex}`, {
+          values: [[new Date().toISOString()]]
+        });
+
+        return res.status(200).json({
+          success: true,
+          student: {
+            studentId: studentData[0],
+            name: studentData[1],
+            email: studentData[2],
+            phone: studentData[3],
+            modules: [
+              studentData[5]?.toString().toUpperCase() === 'TRUE',
+              studentData[6]?.toString().toUpperCase() === 'TRUE',
+              studentData[7]?.toString().toUpperCase() === 'TRUE'
+            ],
+            resumeLink: studentData[9] || ''
+          },
+          isLiveSheet: true
+        });
+      }
+
+      // 3. SYNC MODULES
+      if (action === 'sync') {
+        const data = await sheetsApiRequest('GET', 'Students!A:A');
+        const rows = data.values || [];
+        const targetId = studentId.trim().toLowerCase();
+        let studentRowIndex = -1;
+
+        for (let i = 1; i < rows.length; i++) {
+          const cellId = rows[i][0] ? rows[i][0].toString().trim().toLowerCase() : "";
+          if (cellId && cellId === targetId) {
+            studentRowIndex = i + 1;
+            break;
+          }
+        }
+
+        if (studentRowIndex === -1) {
+          return res.status(404).json({ success: false, message: 'Student not found.' });
+        }
+
+        await sheetsApiRequest('PUT', `Students!F${studentRowIndex}:I${studentRowIndex}`, {
+          values: [[
+            modules[0] ? 'TRUE' : 'FALSE',
+            modules[1] ? 'TRUE' : 'FALSE',
+            modules[2] ? 'TRUE' : 'FALSE',
+            new Date().toISOString()
+          ]]
+        });
+
+        return res.status(200).json({ success: true, message: 'Progress saved successfully.' });
+      }
+
+      // 4. UPDATE RESUME URL
+      if (action === 'update_resume') {
+        const data = await sheetsApiRequest('GET', 'Students!A:A');
+        const rows = data.values || [];
+        const targetId = studentId.trim().toLowerCase();
+        let studentRowIndex = -1;
+
+        for (let i = 1; i < rows.length; i++) {
+          const cellId = rows[i][0] ? rows[i][0].toString().trim().toLowerCase() : "";
+          if (cellId && cellId === targetId) {
+            studentRowIndex = i + 1;
+            break;
+          }
+        }
+
+        if (studentRowIndex === -1) {
+          return res.status(404).json({ success: false, message: 'Student not found.' });
+        }
+
+        await sheetsApiRequest('PUT', `Students!I${studentRowIndex}:J${studentRowIndex}`, {
+          values: [[
+            new Date().toISOString(),
+            resumeLink
+          ]]
+        });
+
+        return res.status(200).json({ success: true, message: 'Resume link updated successfully.' });
+      }
+
+      return res.status(400).json({ success: false, message: 'Invalid action parameter.' });
+
     } catch (error: any) {
-      console.error('Proxy to Google Sheets failed:', error);
-      return res.status(502).json({
+      console.error('Google Sheets API operations failed:', error);
+      return res.status(500).json({
         success: false,
-        message: 'Google Sheets sync failed. Falling back to local mock state.',
+        message: 'Google Sheets direct API error occurred.',
         error: error.message
       });
     }
   }
 
-  // Fallback / Mock Database Logic (Runs when Google Sheet URL is not configured yet)
+  // FALLBACK (Mock mode logic)
   try {
     if (action === 'register') {
       const exists = mockDb.some(
