@@ -4,15 +4,44 @@ import { JWT } from 'google-auth-library';
 // Hardcoded Google Service Account credentials & Spreadsheet ID as requested to skip Vercel dashboard environment variables setup
 const SPREADSHEET_ID = "1ib-kb2u4AkQGg43HWcAd9BCEHsgBwv-fKqCeB4smSSQ";
 
-const CREDENTIALS_JSON = `{
-  "type": "service_account",
-  "project_id": "cccc-503212",
-  "private_key_id": "a013f2e830c520018af8772b6f4da426b66573d1",
-  "private_key": "-----BEGIN PRIVATE KEY-----\\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDJTjdcqPEUIoA2\\nc/et0GWT/g83ShebjKsUvKXUzWvanHXQ/MFxTYi8dxo8Kj7cIIjfak7PyJ83Nqs5\\n/4CaPibVJ93NhYq3798PVRHJ7PRBWX4UdUufBxO3Cp73VZnXiBumA25Ce2noLBcS\\nPb7YaECQdmnjd8Ch9I4uJrutzInsRrLQThe4YS0kH9wXVSpCfQlVpnWelvVrXK6D\\n6ve91vPCewDQtJXBswEUhGlRCWbcM4aZ7kuvcXOvF1y4bbaDLzeHV2YzqZb3MsGj\\nWUB4UUaR1FY2KYrfN7nqG0G49FblRMLm8OdAJwfDTBTXISdckmhUNF++3m9ARg+S\\nFCIX4TvzAgMBAAECggEAHwT2cvN1cpd+ZOWpx2woEDiYj6R9zseg9SkR70tYJe+b\\nbVYFWOLhrGjjRLIdzZMV2Zdqst9ElCAlx7d0pvqSG/ZwrzgMusXeUWEtGeMcIEBy\\nCnpTP3C6ZlI0p1gsGeeB8IBG1T0Ugg+JM+kKfL5Tye71PMqPMbrwIxxvfxsthZgk\\nAypc6BJ6jhcOl2tIAMhZOo1ZGKctb/ATilO4BdqS/07XLkGle+RjBtr7T+JZXXyJ\\ncQYV/8z7prPWWH6ydB6NekvyQwd30yuNr71D81OrO+vm9kvH2UUuMJMycgTqREU1\\nzd/C/XMBXg9NoXlzyQrmMoVEJp9BBdlk6KemCkpEAQKBgQDmD4SK+UMup1SgB11A\\nTsYm54RNgWfecIcs/SpmqUnnVus+xzfUPPUYFxdh3teAxLf6M4Fttg2cxPAn/Wjw\\nhcH811YMy7Ee1GK/TxKpC/wTP8L5ojaTbOB63yuldtUuwVE1IJIz42agzEjZVp1R\\nuDPgXjHgLTxrLJIA+r+Sw95nMwKBgQDgALXPEVV+kw+YK/mNCN066Yn3BQs+JHiJ\\nK/wP/hwRX/SWX6fsxvEtlsrevvrXSqQiqx5XTTSikRHaCYJd0KZyGQTiUkt6GNt6\\ntVd3KcG8BHw7MhAU3BMNR1W+mhXJeIgnJeHjxEwpJtsv/YewiMEcVxANS2DKjjNG\\n/CQfvVLYQQKBgAi0rZ9Ur2Ykjt8/aBf24yi1uhv0uamBOJxLOD+KSHGoqF5Hy6UM\\naXnv5cKeXClTSGL/b/Zm3T0BdtUMkdwIM78NpwP08U7pWpNCusIK4g8Yaphnuwj5\\nJcWAjHZGeOq8BgaspNuxz0Bmeps+29Ur00q6Rcjl7VNg7GV9F6LGJrRhAoGBANtp\\nlqxnLDk5T3Mcz+oHnruP+iXN+P87th2WyeXYYCHcvbV1qQTSsXaYV8rrgsTTRgb3\\nWlblNwNt2fCak+nU8NSeERymw2urYYDGlBATBMNoGU/ab8oe70J4d1Kll2Wq/KJs\\nBuGVa4x7lQNi8UBIE+/wj7aV+Q8vTqbfX3r/dWCBAoGBAOMBmewwRPs1jRRj0Oxz\\ntNagDzhz3YIOzjlunxag2HB4sTJV+W1GIw/qy6uD3JYJXNrgASmD9TYzqy76Zqt\\n36xwZ/ZY52ARghKjB28xEFvDfVUX9Xh4wn60+jATdZMkl5leeJXfNonzVUdNxhHY\\nAx9lRH0e9He2QtAskjh0jSmE\\n-----END PRIVATE KEY-----\\n",
-  "client_email": "sheets-tracker-bot@cccc-503212.iam.gserviceaccount.com"
-}`;
+const PRIVATE_KEY_LINES = [
+  "-----BEGIN PRIVATE KEY-----",
+  "MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDJTjdcqPEUIoA2",
+  "c/et0GWT/g83ShebjKsUvKXUzWvanHXQ/MFxTYi8dxo8Kj7cIIjfak7PyJ83Nqs5",
+  "/4CaPibVJ93NhYq3798PVRHJ7PRBWX4UdUufBxO3Cp73VZnXiBumA25Ce2noLBcS",
+  "Pb7YaECQdmnjd8Ch9I4uJrutzInsRrLQThe4YS0kH9wXVSpCfQlVpnWelvVrXK6D",
+  "6ve91vPCewDQtJXBswEUhGlRCWbcM4aZ7kuvcXOvF1y4bbaDLzeHV2YzqZb3MsGj",
+  "WUB4UUaR1FY2KYrfN7nqG0G49FblRMLm8OdAJwfDTBTXISdckmhUNF++3m9ARg+S",
+  "FCIX4TvzAgMBAAECggEAHwT2cvN1cpd+ZOWpx2woEDiYj6R9zseg9SkR70tYJe+b",
+  "bVYFWOLhrGjjRLIdzZMV2Zdqst9ElCAlx7d0pvqSG/ZwrzgMusXeUWEtGeMcIEBy",
+  "CnpTP3C6ZlI0p1gsGeeB8IBG1T0Ugg+JM+kKfL5Tye71PMqPMbrwIxxvfxsthZgk",
+  "Aypc6BJ6jhcOl2tIAMhZOo1ZGKctb/ATilO4BdqS/07XLkGle+RjBtr7T+JZXXyJ",
+  "cQYV/8z7prPWWH6ydB6NekvyQwd30yuNr71D81OrO+vm9kvH2UUuMJMycgTqREU1",
+  "zd/C/XMBXg9NoXlzyQrmMoVEJp9BBdlk6KemCkpEAQKBgQDmD4SK+UMup1SgB11A",
+  "TsYm54RNgWfecIcs/SpmqUnnVus+xzfUPPUYFxdh3teAxLf6M4Fttg2cxPAn/Wjw",
+  "hcH811YMy7Ee1GK/TxKpC/wTP8L5ojaTbOB63yuldtUuwVE1IJIz42agzEjZVp1R",
+  "uDPgXjHgLTxrLJIA+r+Sw95nMwKBgQDgALXPEVV+kw+YK/mNCN066Yn3BQs+JHiJ",
+  "K/wP/hwRX/SWX6fsxvEtlsrevvrXSqQiqx5XTTSikRHaCYJd0KZyGQTiUkt6GNt6",
+  "tVd3KcG8BHw7MhAU3BMNR1W+mhXJeIgnJeHjxEwpJtsv/YewiMEcVxANS2DKjjNG",
+  "/CQfvVLYQQKBgAi0rZ9Ur2Ykjt8/aBf24yi1uhv0uamBOJxLOD+KSHGoqF5Hy6UM",
+  "aXnv5cKeXClTSGL/b/Zm3T0BdtUMkdwIM78NpwP08U7pWpNCusIK4g8Yaphnuwj5",
+  "JcWAjHZGeOq8BgaspNuxz0Bmeps+29Ur00q6Rcjl7VNg7GV9F6LGJrRhAoGBANtp",
+  "lqxnLDk5T3Mcz+oHnruP+iXN+P87th2WyeXYYCHcvbV1qQTSsXaYV8rrgsTTRgb3",
+  "WlblNwNt2fCak+nU8NSeERymw2urYYDGlBATBMNoGU/ab8oe70J4d1Kll2Wq/KJs",
+  "BuGVa4x7lQNi8UBIE+/wj7aV+Q8vTqbfX3r/dWCBAoGBAOMBmewwRPs1jRRj0Oxz",
+  "3tNagDzhz3YIOzjlunxag2HB4sTJV+W1GIw/qy6uD3JYJXNrgASmD9TYzqy76Zqt",
+  "36xwZ/ZY52ARghKjB28xEFvDfVUX9Xh4wn60+jATdZMkl5leeJXfNonzVUdNxhHY",
+  "Ax9lRH0e9He2QtAskjh0jSmE",
+  "-----END PRIVATE KEY-----"
+];
 
-const credentials = JSON.parse(CREDENTIALS_JSON);
+// Reconstruct key with explicit UNIX line breaks dynamically
+const PRIVATE_KEY = PRIVATE_KEY_LINES.join('\n') + '\n';
+
+const credentials = {
+  client_email: "sheets-tracker-bot@cccc-503212.iam.gserviceaccount.com",
+  private_key: PRIVATE_KEY
+};
 
 // Initialize JWT Client for Google Sheets API v4
 const jwtClient = new JWT({
