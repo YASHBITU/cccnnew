@@ -779,7 +779,13 @@ export const PortalPage: React.FC = () => {
                         {activeModule.duration}
                       </div>
 
-                      <div className="flex items-center justify-center flex-grow">
+                      <div 
+                        className="flex items-center justify-center flex-grow"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleVideoPlayToggle();
+                        }}
+                      >
                         <motion.div 
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.95 }}
