@@ -11,7 +11,7 @@ export const placements = [
         company: "Kredit Bee",
         review: "Really thanks for CCC, i was frustrated by applying on lots of job opening, and was not even able to schedule the interview. But CCC help me to the calls, i started calls and even i gave 3 interview and finally got selected in one. Thankyou so much for your support",
         linkedin: "https://www.linkedin.com/in/dinesh-rathod-a71657399/",
-        image: "/kiran.jpg",
+        image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=640&auto=format&fit=crop",
     },
     {
         id: 2,
@@ -21,7 +21,7 @@ export const placements = [
         company: "Toluna",
         review: "My experience was too good with CCC, Team of CCC was so experienced in Interview Process. I will recommend it to all the people who are not getting the interview calls and struggling to clear the interview. They also helped me in Resume Building and Linkedin Profile. Worth decision. Grateful to have CCC in my job hunting process",
         linkedin: "https://www.linkedin.com/in/kiran-chavan-29a3bb3a0/",
-        image: "/dinesh.jpg",
+        image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=640&auto=format&fit=crop",
     },
     {
         id: 3,
@@ -31,7 +31,7 @@ export const placements = [
         company: "Interface Solution",
         review: "As a fresher its was too difficult to get the opportunity, i was like - i need a job at any cost. I was just looking for experience, in future once i will have experience, i will focus on Better opportunity. But CCC help me to land with Interface solution as a Junior Java Developer",
         linkedin: "https://www.linkedin.com/in/prasann-autade-5b85652a7/",
-        image: "/prasann.jpg",
+        image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=640&auto=format&fit=crop",
     },
     {
         id: 4,
@@ -41,7 +41,7 @@ export const placements = [
         company: "Bajaj Finserve",
         review: "One of the best platform I came across for my job hunting. I got best service and guidance from resume polishing to mock interviews everything is top notch. And the job hunt strategy is game changer for me",
         linkedin: "https://www.linkedin.com/in/gajanand-vagile-d9/",
-        image: "/gajanand.jpg",
+        image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=640&auto=format&fit=crop",
     },
 ];
 
