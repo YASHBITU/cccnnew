@@ -14,7 +14,11 @@ import {
   Trash2,
   BookOpen,
   Sparkles,
-  Video
+  Video,
+  Database,
+  X,
+  FileCode,
+  Info
 } from 'lucide-react';
 
 interface Module {
@@ -34,13 +38,38 @@ interface SharedLink {
   category: string;
 }
 
+interface StudentProfile {
+  studentId: string;
+  name: string;
+  email: string;
+  phone: string;
+  resumeLink: string;
+}
+
 export const PortalPage: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
     return localStorage.getItem('ccc_portal_auth') === 'true';
   });
+  const [isRegisterMode, setIsRegisterMode] = useState<boolean>(false);
   const [studentId, setStudentId] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const [name, setName] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
+  const [phone, setPhone] = useState<string>('');
   const [authError, setAuthError] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  
+  const [isLiveSheet, setIsLiveSheet] = useState<boolean>(() => {
+    return localStorage.getItem('ccc_is_live_sheet') === 'true';
+  });
+  
+  const [profile, setProfile] = useState<StudentProfile | null>(() => {
+    const saved = localStorage.getItem('ccc_student_profile');
+    return saved ? JSON.parse(saved) : null;
+  });
+
+  const [resumeUrlInput, setResumeUrlInput] = useState<string>('');
+  const [showSheetsModal, setShowSheetsModal] = useState<boolean>(false);
 
   const [activeTab, setActiveTab] = useState<'modules' | 'resources' | 'booking'>('modules');
   const [activeModuleId, setActiveModuleId] = useState<number>(1);
@@ -53,13 +82,12 @@ export const PortalPage: React.FC = () => {
     const saved = localStorage.getItem('ccc_shared_links');
     if (saved) return JSON.parse(saved);
     
-    // Default shared links
     return [
       {
         id: '1',
         title: 'ATS-Friendly Google Docs Resume Template',
         url: 'https://docs.google.com/document/d/1t-8Z-w9jI03o3UeK8k7c7N-N1vX_0l0u/copy',
-        description: 'Clean, double-column and single-column structures engineered for recruiter readability and automatic scanner compatibility.',
+        description: 'Recruiter-optimized structural layouts matching single and double column specifications.',
         category: 'Templates'
       },
       {
@@ -134,33 +162,201 @@ export const PortalPage: React.FC = () => {
     localStorage.setItem('ccc_shared_links', JSON.stringify(customLinks));
   }, [customLinks]);
 
-  const handleLogin = (e: React.FormEvent) => {
+  // Set the input field with current resume link on load
+  useEffect(() => {
+    if (profile?.resumeLink) {
+      setResumeUrlInput(profile.resumeLink);
+    } else {
+      setResumeUrlInput('');
+    }
+  }, [profile]);
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!studentId.trim()) {
-      setAuthError('Student ID is required.');
+    if (!studentId.trim() || !password.trim()) {
+      setAuthError('All fields are required.');
       return;
     }
-    const cleanPassword = password.trim();
-    if (cleanPassword.toUpperCase() === 'CCC2026' || cleanPassword.toLowerCase() === 'demo') {
-      setIsAuthenticated(true);
-      localStorage.setItem('ccc_portal_auth', 'true');
-      setAuthError('');
-    } else {
-      setAuthError('Invalid credentials. Password is "CCC2026" or click "Quick Demo Preview".');
+    setIsLoading(true);
+    setAuthError('');
+
+    try {
+      const res = await fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'login',
+          studentId: studentId.trim(),
+          password: password.trim()
+        })
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        setIsAuthenticated(true);
+        setIsLiveSheet(!!data.isLiveSheet);
+        localStorage.setItem('ccc_portal_auth', 'true');
+        localStorage.setItem('ccc_is_live_sheet', data.isLiveSheet ? 'true' : 'false');
+        
+        const loadedProfile: StudentProfile = {
+          studentId: data.student.studentId,
+          name: data.student.name,
+          email: data.student.email,
+          phone: data.student.phone,
+          resumeLink: data.student.resumeLink || ''
+        };
+        setProfile(loadedProfile);
+        localStorage.setItem('ccc_student_profile', JSON.stringify(loadedProfile));
+
+        const loadedModules: number[] = [];
+        if (data.student.modules[0]) loadedModules.push(1);
+        if (data.student.modules[1]) loadedModules.push(2);
+        if (data.student.modules[2]) loadedModules.push(3);
+        setCompletedModules(loadedModules);
+        setAuthError('');
+      } else {
+        setAuthError(data.message || 'Login failed. Incorrect ID or password.');
+      }
+    } catch (err) {
+      setAuthError('Connection error. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim() || !phone.trim() || !studentId.trim() || !email.trim() || !password.trim()) {
+      setAuthError('All fields are required.');
+      return;
+    }
+    setIsLoading(true);
+    setAuthError('');
+
+    try {
+      const res = await fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'register',
+          studentId: studentId.trim(),
+          name: name.trim(),
+          email: email.trim(),
+          phone: phone.trim(),
+          password: password.trim()
+        })
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        setIsAuthenticated(true);
+        setIsLiveSheet(!!data.isLiveSheet);
+        localStorage.setItem('ccc_portal_auth', 'true');
+        localStorage.setItem('ccc_is_live_sheet', data.isLiveSheet ? 'true' : 'false');
+
+        const loadedProfile: StudentProfile = {
+          studentId: studentId.trim(),
+          name: name.trim(),
+          email: email.trim(),
+          phone: phone.trim(),
+          resumeLink: ''
+        };
+        setProfile(loadedProfile);
+        localStorage.setItem('ccc_student_profile', JSON.stringify(loadedProfile));
+        setCompletedModules([]);
+        setAuthError('');
+      } else {
+        setAuthError(data.message || 'Registration failed.');
+      }
+    } catch (err) {
+      setAuthError('Connection error. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleDemoAccess = () => {
     setIsAuthenticated(true);
+    setIsLiveSheet(false);
     localStorage.setItem('ccc_portal_auth', 'true');
+    localStorage.setItem('ccc_is_live_sheet', 'false');
+    
+    const loadedProfile: StudentProfile = {
+      studentId: 'demo_user',
+      name: 'Demo Student',
+      email: 'demo@ccc.com',
+      phone: '+61 412 345 678',
+      resumeLink: 'https://docs.google.com/document/d/1t-8Z-w9jI03o3UeK8k7c7N-N1vX_0l0u/copy'
+    };
+    setProfile(loadedProfile);
+    localStorage.setItem('ccc_student_profile', JSON.stringify(loadedProfile));
+    setCompletedModules([1]);
     setAuthError('');
   };
 
-  const toggleCompleted = (id: number) => {
+  const toggleCompleted = async (id: number) => {
+    let updated: number[];
     if (completedModules.includes(id)) {
-      setCompletedModules(completedModules.filter(mId => mId !== id));
+      updated = completedModules.filter(mId => mId !== id);
     } else {
-      setCompletedModules([...completedModules, id]);
+      updated = [...completedModules, id];
+    }
+    setCompletedModules(updated);
+
+    if (profile?.studentId && profile.studentId !== 'demo_user') {
+      const modulesState = [1, 2, 3].map(mId => updated.includes(mId));
+      try {
+        await fetch('/api/auth', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'sync',
+            studentId: profile.studentId,
+            modules: modulesState
+          })
+        });
+      } catch (err) {
+        console.error('Failed to sync progress:', err);
+      }
+    }
+  };
+
+  const handleUpdateResume = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!profile) return;
+    setIsLoading(true);
+
+    const formattedUrl = resumeUrlInput.trim().startsWith('http://') || resumeUrlInput.trim().startsWith('https://')
+      ? resumeUrlInput.trim()
+      : `https://${resumeUrlInput.trim()}`;
+
+    try {
+      const res = await fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'update_resume',
+          studentId: profile.studentId,
+          resumeLink: formattedUrl
+        })
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        const updatedProfile = { ...profile, resumeLink: formattedUrl };
+        setProfile(updatedProfile);
+        localStorage.setItem('ccc_student_profile', JSON.stringify(updatedProfile));
+        alert('Resume link successfully synchronized with database!');
+      } else {
+        alert(data.message || 'Failed to update resume link.');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Connection error. Failed to save to spreadsheet.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -203,11 +399,23 @@ export const PortalPage: React.FC = () => {
 
   const handleLogout = () => {
     setIsAuthenticated(false);
+    setIsLiveSheet(false);
+    setProfile(null);
     localStorage.removeItem('ccc_portal_auth');
+    localStorage.removeItem('ccc_is_live_sheet');
+    localStorage.removeItem('ccc_student_profile');
+    localStorage.removeItem('ccc_completed_modules');
+    setCompletedModules([]);
+    setStudentId('');
+    setPassword('');
+    setName('');
+    setPhone('');
+    setEmail('');
   };
 
   const progressPercentage = Math.round((completedModules.length / modules.length) * 100);
 
+  // Lockscreen Auth View
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen pt-28 pb-20 flex items-center justify-center bg-[#fcfcfc] px-6">
@@ -215,92 +423,212 @@ export const PortalPage: React.FC = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="w-full max-w-md bg-white border border-slate-100 rounded-[2.5rem] p-8 md:p-12 shadow-2xl shadow-[#4285F4]/5 text-center relative overflow-hidden"
+          className="w-full max-w-md bg-white border border-slate-100 rounded-[2.5rem] p-8 md:p-10 shadow-2xl shadow-[#4285F4]/5 relative overflow-hidden"
         >
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-48 bg-[#4285F4]/5 blur-[60px] rounded-full -z-10" />
           
-          <div className="w-16 h-16 bg-[#4285F4]/10 rounded-3xl flex items-center justify-center text-[#4285F4] mx-auto mb-6">
-            <Lock size={28} className="animate-pulse" />
+          <div className="w-12 h-12 bg-[#4285F4]/10 rounded-2xl flex items-center justify-center text-[#4285F4] mx-auto mb-4">
+            <Lock size={22} className="animate-pulse" />
           </div>
 
-          <h2 className="text-3xl font-black tracking-tight text-slate-900 mb-2">Student Portal</h2>
-          <p className="text-slate-400 text-sm font-semibold mb-8 uppercase tracking-widest text-[9px]">Career Craft Consultancy Curriculum</p>
+          <h2 className="text-2xl font-black tracking-tight text-slate-900 text-center mb-1">Student Portal</h2>
+          <p className="text-slate-400 text-center text-xs font-semibold mb-6 uppercase tracking-widest text-[8px]">Career Craft Consultancy Curriculum</p>
 
-          <form onSubmit={handleLogin} className="space-y-4 text-left">
-            <div>
-              <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Student ID or Email</label>
-              <input 
-                type="text" 
-                required
-                placeholder="student@example.com" 
-                value={studentId}
-                onChange={(e) => setStudentId(e.target.value)}
-                className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200/80 rounded-2xl text-slate-900 font-semibold focus:outline-none focus:border-[#4285F4] focus:ring-1 focus:ring-[#4285F4] transition-all"
-              />
-            </div>
+          <AnimatePresence mode="wait">
+            {!isRegisterMode ? (
+              <motion.form 
+                key="login-form"
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 10 }}
+                onSubmit={handleLogin} 
+                className="space-y-4 text-left"
+              >
+                <div>
+                  <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 ml-1">Student ID or Email</label>
+                  <input 
+                    type="text" 
+                    required
+                    placeholder="student@example.com" 
+                    value={studentId}
+                    onChange={(e) => setStudentId(e.target.value)}
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200/80 rounded-xl text-slate-950 font-semibold focus:outline-none focus:border-[#4285F4] focus:ring-1 focus:ring-[#4285F4] transition-all text-sm"
+                  />
+                </div>
 
-            <div>
-              <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Password</label>
-              <input 
-                type="password" 
-                required
-                placeholder="••••••••" 
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200/80 rounded-2xl text-slate-900 font-semibold focus:outline-none focus:border-[#4285F4] focus:ring-1 focus:ring-[#4285F4] transition-all"
-              />
-            </div>
+                <div>
+                  <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 ml-1">Password</label>
+                  <input 
+                    type="password" 
+                    required
+                    placeholder="••••••••" 
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200/80 rounded-xl text-slate-950 font-semibold focus:outline-none focus:border-[#4285F4] focus:ring-1 focus:ring-[#4285F4] transition-all text-sm"
+                  />
+                </div>
 
-            {authError && (
-              <p className="text-rose-500 font-bold text-xs text-left px-2">{authError}</p>
+                {authError && (
+                  <p className="text-rose-500 font-bold text-xs px-1">{authError}</p>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full bg-[#4285F4] text-white py-3.5 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-[#3b78e7] transition-all active:scale-[0.98] shadow-lg shadow-[#4285F4]/20 flex items-center justify-center"
+                >
+                  {isLoading ? 'Unlocking...' : 'Unlock Portal'}
+                </button>
+              </motion.form>
+            ) : (
+              <motion.form 
+                key="register-form"
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
+                onSubmit={handleRegister} 
+                className="space-y-3 text-left"
+              >
+                <div>
+                  <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 ml-1">Full Name</label>
+                  <input 
+                    type="text" 
+                    required
+                    placeholder="John Doe" 
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200/80 rounded-xl text-slate-950 font-semibold focus:outline-none focus:border-[#4285F4] focus:ring-1 focus:ring-[#4285F4] transition-all text-xs"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 ml-1">Student ID (Custom)</label>
+                    <input 
+                      type="text" 
+                      required
+                      placeholder="CCC-101" 
+                      value={studentId}
+                      onChange={(e) => setStudentId(e.target.value)}
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200/80 rounded-xl text-slate-950 font-semibold focus:outline-none focus:border-[#4285F4] focus:ring-1 focus:ring-[#4285F4] transition-all text-xs"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 ml-1">Phone Number</label>
+                    <input 
+                      type="text" 
+                      required
+                      placeholder="+61 400 000 000" 
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200/80 rounded-xl text-slate-950 font-semibold focus:outline-none focus:border-[#4285F4] focus:ring-1 focus:ring-[#4285F4] transition-all text-xs"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 ml-1">Email Address</label>
+                  <input 
+                    type="email" 
+                    required
+                    placeholder="student@example.com" 
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200/80 rounded-xl text-slate-950 font-semibold focus:outline-none focus:border-[#4285F4] focus:ring-1 focus:ring-[#4285F4] transition-all text-xs"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 ml-1">Password</label>
+                  <input 
+                    type="password" 
+                    required
+                    placeholder="Set Password" 
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200/80 rounded-xl text-slate-950 font-semibold focus:outline-none focus:border-[#4285F4] focus:ring-1 focus:ring-[#4285F4] transition-all text-xs"
+                  />
+                </div>
+
+                {authError && (
+                  <p className="text-rose-500 font-bold text-xs px-1">{authError}</p>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full bg-[#4285F4] text-white py-3 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-[#3b78e7] transition-all active:scale-[0.98] shadow-lg shadow-[#4285F4]/20 flex items-center justify-center"
+                >
+                  {isLoading ? 'Registering...' : 'Register & Log In'}
+                </button>
+              </motion.form>
             )}
+          </AnimatePresence>
 
+          <div className="mt-4 text-center">
             <button
-              type="submit"
-              className="w-full bg-[#4285F4] text-white py-4 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-[#3b78e7] transition-all active:scale-[0.98] shadow-lg shadow-[#4285F4]/20"
+              onClick={() => {
+                setIsRegisterMode(!isRegisterMode);
+                setAuthError('');
+              }}
+              className="text-xs text-[#4285F4] font-bold hover:underline"
             >
-              Unlock Access
+              {isRegisterMode ? 'Already have an account? Log In' : "Don't have an account? Register"}
             </button>
-          </form>
+          </div>
 
-          <div className="relative flex py-4 items-center">
+          <div className="relative flex py-3 items-center">
             <div className="flex-grow border-t border-slate-100"></div>
-            <span className="flex-shrink mx-4 text-[10px] text-slate-400 uppercase font-black tracking-widest">or</span>
+            <span className="flex-shrink mx-3 text-[9px] text-slate-400 uppercase font-black tracking-widest">or</span>
             <div className="flex-grow border-t border-slate-100"></div>
           </div>
 
           <button
             onClick={handleDemoAccess}
-            className="w-full bg-slate-50 text-slate-700 py-4 rounded-2xl font-bold text-sm hover:bg-slate-100 transition-all border border-slate-200/60 active:scale-[0.98]"
+            className="w-full bg-slate-50 text-slate-600 py-3 rounded-xl font-bold text-xs hover:bg-slate-100 transition-all border border-slate-200/60 active:scale-[0.98]"
           >
             Quick Demo Preview
           </button>
-
-          <p className="text-[10px] text-gray-400 font-medium mt-6">
-            If you are a student and lost your credentials, please contact support.
-          </p>
         </motion.div>
       </div>
     );
   }
 
+  // Dashboard Main View
   return (
     <div className="min-h-screen pt-24 pb-20 md:pt-32 md:pb-32 bg-[#fcfcfc]">
       <div className="max-w-7xl mx-auto px-6">
         
         {/* Header Dashboard section */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+        <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-8">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#4285F4]/10 text-[#4285F4] rounded-full text-[10px] font-black uppercase tracking-widest mb-3">
-              <Sparkles size={10} /> Active Student Academy
+            <div className="flex flex-wrap items-center gap-2 mb-3">
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#4285F4]/10 text-[#4285F4] rounded-full text-[10px] font-black uppercase tracking-widest">
+                <Sparkles size={10} /> Active Student Academy
+              </div>
+              <button 
+                onClick={() => setShowSheetsModal(true)}
+                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all ${
+                  isLiveSheet 
+                    ? 'bg-emerald-50 text-emerald-600 border-emerald-200 hover:bg-emerald-100' 
+                    : 'bg-amber-50 text-amber-600 border-amber-200 hover:bg-amber-100'
+                }`}
+              >
+                <span className={`w-1.5 h-1.5 rounded-full ${isLiveSheet ? 'bg-emerald-500' : 'bg-amber-500 animate-pulse'}`} />
+                {isLiveSheet ? 'Google Sheet Active' : 'Sheets: Mock Mode (Setup)'}
+              </button>
             </div>
             <h1 className="text-4xl md:text-5xl font-black tracking-tight text-slate-900">Job Hunt Curriculum</h1>
-            <p className="text-slate-500 font-medium mt-1">Unlock modules, grab recruiters outreach templates, and build your resume.</p>
+            {profile && (
+              <p className="text-slate-500 text-sm font-semibold mt-2">
+                Student: <span className="text-slate-800 font-black">{profile.name}</span> (ID: {profile.studentId}) | Email: {profile.email} | Phone: {profile.phone}
+              </p>
+            )}
           </div>
 
           <button
             onClick={handleLogout}
-            className="self-start md:self-auto text-xs text-slate-400 font-black tracking-widest uppercase hover:text-rose-500 transition-colors border border-slate-200 px-4 py-2 rounded-xl bg-white hover:bg-rose-50/20"
+            className="self-start text-xs text-slate-400 font-black tracking-widest uppercase hover:text-rose-500 transition-colors border border-slate-200 px-4 py-2 rounded-xl bg-white hover:bg-rose-50/20"
           >
             Exit Portal
           </button>
@@ -376,8 +704,6 @@ export const PortalPage: React.FC = () => {
               {/* Left Column: Video Player & Synopsis */}
               <div className="lg:col-span-2 space-y-6">
                 <div className="bg-slate-950 border border-slate-900 rounded-[2.5rem] overflow-hidden relative shadow-2xl group flex items-center justify-center aspect-video">
-                  
-                  {/* Real video player implementation */}
                   <video
                     ref={videoRef}
                     src={activeModule.videoUrl}
@@ -386,7 +712,6 @@ export const PortalPage: React.FC = () => {
                     preload="auto"
                   />
 
-                  {/* HTML5 video placeholder banner if not playing */}
                   {!isPlaying && (
                     <div 
                       className="absolute inset-0 w-full h-full flex flex-col justify-between p-6 bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-transparent cursor-pointer"
@@ -413,7 +738,6 @@ export const PortalPage: React.FC = () => {
                     </div>
                   )}
 
-                  {/* Quick video playback helper info */}
                   {isPlaying && (
                     <div className="absolute top-4 right-4 z-40 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <button 
@@ -426,8 +750,9 @@ export const PortalPage: React.FC = () => {
                   )}
                 </div>
 
+                {/* Module Details Card */}
                 <div className="bg-white border border-slate-100 rounded-[2rem] p-8 shadow-sm">
-                  <div className="flex items-center justify-between mb-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
                     <div>
                       <span className="text-[10px] font-black uppercase text-[#4285F4] tracking-[0.2em]">Active Module</span>
                       <h2 className="text-2xl font-bold text-slate-900 mt-1">{activeModule.title}</h2>
@@ -435,7 +760,7 @@ export const PortalPage: React.FC = () => {
                     
                     <button
                       onClick={() => toggleCompleted(activeModule.id)}
-                      className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest transition-all ${
+                      className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-widest transition-all self-start sm:self-auto ${
                         completedModules.includes(activeModule.id)
                           ? 'bg-emerald-50 text-emerald-600 border border-emerald-200'
                           : 'bg-slate-50 text-slate-600 border border-slate-200 hover:bg-slate-100'
@@ -446,6 +771,45 @@ export const PortalPage: React.FC = () => {
                     </button>
                   </div>
                   <p className="text-slate-500 text-sm leading-relaxed">{activeModule.description}</p>
+                </div>
+
+                {/* Personal Student-Specific Resume URL Card */}
+                <div className="bg-white border border-slate-100 rounded-[2rem] p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
+                  <div className="space-y-1 flex-grow">
+                    <div className="flex items-center gap-2">
+                      <span className="bg-indigo-50 text-indigo-600 text-[9px] font-black uppercase px-2 py-0.5 rounded tracking-wider">
+                        My Drafts
+                      </span>
+                      <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Student-Specific File</span>
+                    </div>
+                    <h4 className="font-bold text-slate-900 text-lg leading-snug">Personal Resume Workspace</h4>
+                    {profile?.resumeLink ? (
+                      <p className="text-xs text-slate-500 font-semibold truncate max-w-md">
+                        Linked to: <a href={profile.resumeLink} target="_blank" rel="noopener noreferrer" className="text-[#4285F4] hover:underline font-bold flex inline-flex items-center gap-1">{profile.resumeLink} <ExternalLink size={10} /></a>
+                      </p>
+                    ) : (
+                      <p className="text-xs text-amber-500 font-bold">
+                        ⚠️ No resume link added yet. Paste your Google Doc link below.
+                      </p>
+                    )}
+                  </div>
+
+                  <form onSubmit={handleUpdateResume} className="flex items-center gap-3 w-full md:w-auto">
+                    <input
+                      type="text"
+                      placeholder="Paste Google Doc / Resume link"
+                      value={resumeUrlInput}
+                      onChange={(e) => setResumeUrlInput(e.target.value)}
+                      className="px-4 py-2.5 bg-slate-50 border border-slate-200/80 rounded-xl text-xs font-semibold focus:outline-none focus:border-[#4285F4] focus:ring-1 focus:ring-[#4285F4] w-full md:w-60"
+                    />
+                    <button
+                      type="submit"
+                      disabled={isLoading}
+                      className="bg-[#4285F4] text-white hover:bg-[#3b78e7] px-4 py-2.5 rounded-xl font-black text-xs uppercase tracking-widest transition-all whitespace-nowrap active:scale-[0.98] shadow-md shadow-[#4285F4]/10"
+                    >
+                      {profile?.resumeLink ? 'Update' : 'Link File'}
+                    </button>
+                  </form>
                 </div>
               </div>
 
@@ -513,7 +877,6 @@ export const PortalPage: React.FC = () => {
               transition={{ duration: 0.4 }}
               className="grid lg:grid-cols-3 gap-8"
             >
-              {/* Left 2 Columns: Shared Links list */}
               <div className="lg:col-span-2 space-y-6">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-black tracking-tight text-slate-900 uppercase tracking-wide">Document Swipe Library</h3>
@@ -549,7 +912,6 @@ export const PortalPage: React.FC = () => {
                           Open Link
                         </button>
 
-                        {/* Allow user to delete manually added custom links */}
                         {parseInt(link.id) > 10 && (
                           <button
                             onClick={() => handleDeleteLink(link.id)}
@@ -565,7 +927,6 @@ export const PortalPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Right Column: Share a new Link panel */}
               <div className="space-y-6">
                 <div className="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm">
                   <h4 className="font-black text-slate-900 text-md uppercase tracking-wider mb-2 flex items-center gap-2">
@@ -687,6 +1048,156 @@ export const PortalPage: React.FC = () => {
         </AnimatePresence>
 
       </div>
+
+      {/* Google Sheets Live Integration Configuration Modal */}
+      <AnimatePresence>
+        {showSheetsModal && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[500] flex items-center justify-center p-4 md:p-6"
+          >
+            <motion.div 
+              initial={{ scale: 0.95, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.95, y: 20 }}
+              className="bg-white border border-slate-100 rounded-[2.5rem] w-full max-w-2xl shadow-2xl p-6 md:p-10 relative overflow-y-auto max-h-[85vh]"
+            >
+              <button 
+                onClick={() => setShowSheetsModal(false)}
+                className="absolute top-6 right-6 p-2 text-slate-400 hover:text-slate-950 bg-slate-50 hover:bg-slate-100 rounded-full transition-all"
+              >
+                <X size={18} />
+              </button>
+
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center">
+                  <Database size={22} />
+                </div>
+                <div>
+                  <h3 className="text-xl md:text-2xl font-black tracking-tight text-slate-900">Google Sheets Integration Guide</h3>
+                  <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider mt-0.5">Automate student logins and progress tracking</p>
+                </div>
+              </div>
+
+              <div className="space-y-6 text-slate-600 text-sm leading-relaxed">
+                <div className="bg-slate-50 rounded-2xl p-5 border border-slate-200/50">
+                  <h4 className="font-bold text-slate-900 mb-1 flex items-center gap-2 text-xs uppercase tracking-wider">
+                    <Info size={14} className="text-[#4285F4]" /> Current Status: {isLiveSheet ? '🟢 Active' : '🟡 Mock Mode'}
+                  </h4>
+                  <p className="text-xs text-slate-500 leading-normal">
+                    {isLiveSheet 
+                      ? 'The portal is currently communicating with your active Google Spreadsheet. Registration, login details, progress states, and resume workspace URLs are being saved directly in the sheet!'
+                      : 'Running in local sandbox mock mode. Actions will save in active browser storage. To hook up your real Spreadsheet, follow the steps below:'
+                    }
+                  </p>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex gap-4">
+                    <div className="w-6 h-6 bg-slate-950 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">1</div>
+                    <div>
+                      <h5 className="font-bold text-slate-950 text-sm">Create your Spreadsheet</h5>
+                      <p className="text-xs text-slate-500 mt-0.5">
+                        Create a blank Google Sheet and name the first tab index <strong>"Students"</strong>. Set up these exact headers in Row 1 (A to J):
+                      </p>
+                      <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100 mt-2 font-mono text-[9px] text-slate-700 select-all overflow-x-auto">
+                        Student ID | Name | Email | Phone | Password | Module 1 | Module 2 | Module 3 | Last Active | Resume Link
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-4">
+                    <div className="w-6 h-6 bg-slate-950 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">2</div>
+                    <div className="w-full">
+                      <h5 className="font-bold text-slate-950 text-sm">Paste Apps Script Web App Code</h5>
+                      <p className="text-xs text-slate-500 mt-0.5">
+                        Click on <strong>Extensions &gt; Apps Script</strong>. Replace the empty editor code with the following snippet:
+                      </p>
+                      <div className="bg-slate-950 p-4 rounded-xl mt-2 font-mono text-[9px] text-slate-300 max-h-40 overflow-y-auto select-all relative group">
+                        <pre>{`function doPost(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
+  var data = JSON.parse(e.postData.contents);
+  var action = data.action;
+  var rows = sheet.getDataRange().getValues();
+  
+  if (action === 'register') {
+    for (var i = 1; i < rows.length; i++) {
+      if (rows[i][0].toString().toLowerCase() === data.studentId.toString().toLowerCase() ||
+          rows[i][2].toString().toLowerCase() === data.email.toString().toLowerCase()) {
+        return ContentService.createTextOutput(JSON.stringify({ success: false, message: 'Student ID or Email already exists.' })).setMimeType(ContentService.MimeType.JSON);
+      }
+    }
+    sheet.appendRow([data.studentId, data.name, data.email, data.phone, data.password, false, false, false, new Date(), '']);
+    return ContentService.createTextOutput(JSON.stringify({ success: true, message: 'Registered.' })).setMimeType(ContentService.MimeType.JSON);
+  }
+  
+  if (action === 'login') {
+    for (var i = 1; i < rows.length; i++) {
+      if (rows[i][0].toString().toLowerCase() === data.studentId.toString().toLowerCase() || rows[i][2].toString().toLowerCase() === data.studentId.toString().toLowerCase()) {
+        if (rows[i][4].toString() === data.password.toString()) {
+          sheet.getRange(i + 1, 9).setValue(new Date());
+          return ContentService.createTextOutput(JSON.stringify({
+            success: true,
+            student: { studentId: rows[i][0], name: rows[i][1], email: rows[i][2], phone: rows[i][3], modules: [rows[i][5], rows[i][6], rows[i][7]], resumeLink: rows[i][9] || '' }
+          })).setMimeType(ContentService.MimeType.JSON);
+        } else {
+          return ContentService.createTextOutput(JSON.stringify({ success: false, message: 'Incorrect password.' })).setMimeType(ContentService.MimeType.JSON);
+        }
+      }
+    }
+    return ContentService.createTextOutput(JSON.stringify({ success: false, message: 'Student not found.' })).setMimeType(ContentService.MimeType.JSON);
+  }
+
+  if (action === 'sync') {
+    for (var i = 1; i < rows.length; i++) {
+      if (rows[i][0].toString().toLowerCase() === data.studentId.toString().toLowerCase()) {
+        sheet.getRange(i + 1, 6).setValue(data.modules[0]);
+        sheet.getRange(i + 1, 7).setValue(data.modules[1]);
+        sheet.getRange(i + 1, 8).setValue(data.modules[2]);
+        sheet.getRange(i + 1, 9).setValue(new Date());
+        return ContentService.createTextOutput(JSON.stringify({ success: true })).setMimeType(ContentService.MimeType.JSON);
+      }
+    }
+  }
+
+  if (action === 'update_resume') {
+    for (var i = 1; i < rows.length; i++) {
+      if (rows[i][0].toString().toLowerCase() === data.studentId.toString().toLowerCase()) {
+        sheet.getRange(i + 1, 10).setValue(data.resumeLink);
+        sheet.getRange(i + 1, 9).setValue(new Date());
+        return ContentService.createTextOutput(JSON.stringify({ success: true })).setMimeType(ContentService.MimeType.JSON);
+      }
+    }
+  }
+}`}</pre>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-4">
+                    <div className="w-6 h-6 bg-slate-950 text-white rounded-full flex items-center justify-center font-bold text-xs flex-shrink-0">3</div>
+                    <div>
+                      <h5 className="font-bold text-slate-950 text-sm">Deploy Web App & Save URL</h5>
+                      <p className="text-xs text-slate-500 mt-0.5">
+                        In Apps Script, click <strong>Deploy &gt; New Deployment</strong>. Select <strong>Web App</strong>, set "Execute as" to <strong>Me</strong>, set "Who has access" to <strong>Anyone</strong>, and deploy. Copy the Web App URL.
+                      </p>
+                      <p className="text-xs text-slate-500 mt-1.5">
+                        Add this URL to your Vercel project environment variables as:
+                      </p>
+                      <code className="block bg-slate-50 p-2 rounded-xl text-xs text-[#4285F4] font-black border border-slate-100 mt-1">
+                        GOOGLE_SCRIPT_URL = [Your_Web_App_Url]
+                      </code>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
     </div>
   );
 };
