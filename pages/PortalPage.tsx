@@ -18,7 +18,8 @@ import {
   Database,
   X,
   FileCode,
-  Info
+  Info,
+  Layout
 } from 'lucide-react';
 
 interface Module {
@@ -67,6 +68,25 @@ const getGoogleDrivePreviewUrl = (url: string) => {
   return null;
 };
 
+const getEmbedUrl = (url: string) => {
+  if (!url) return '';
+  const trimmed = url.trim();
+  if (trimmed.includes('canva.com/design/')) {
+    if (!trimmed.includes('?embed') && !trimmed.includes('&embed')) {
+      const base = trimmed.split('?')[0];
+      return `${base}/view?embed`;
+    }
+    return trimmed;
+  }
+  if (trimmed.includes('docs.google.com/document/d/')) {
+    const docIdMatch = trimmed.match(/\/document\/d\/([a-zA-Z0-9-_]+)/);
+    if (docIdMatch && docIdMatch[1]) {
+      return `https://docs.google.com/document/d/${docIdMatch[1]}/preview`;
+    }
+  }
+  return trimmed;
+};
+
 export const PortalPage: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
     return localStorage.getItem('ccc_portal_auth') === 'true';
@@ -92,7 +112,7 @@ export const PortalPage: React.FC = () => {
   const [resumeUrlInput, setResumeUrlInput] = useState<string>('');
   const [showSheetsModal, setShowSheetsModal] = useState<boolean>(false);
 
-  const [activeTab, setActiveTab] = useState<'modules' | 'resources' | 'booking'>('modules');
+  const [activeTab, setActiveTab] = useState<'modules' | 'resources' | 'canva'>('modules');
   const [activeModuleId, setActiveModuleId] = useState<number>(1);
   const [completedModules, setCompletedModules] = useState<number[]>(() => {
     const saved = localStorage.getItem('ccc_completed_modules');
@@ -519,9 +539,9 @@ export const PortalPage: React.FC = () => {
         <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-8">
           <div>
             <div className="flex flex-wrap items-center gap-2 mb-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#4285F4]/10 text-[#4285F4] rounded-full text-[10px] font-black uppercase tracking-widest">
-                <Sparkles size={10} /> Active Student Academy
-              </div>
+              <span className="bg-[#4285F4]/10 text-[#4285F4] border border-[#4285F4]/15 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-1">
+                <Sparkles size={10} className="animate-pulse" /> CCC Career Academy
+              </span>
               <button 
                 onClick={() => setShowSheetsModal(true)}
                 className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all ${
@@ -594,15 +614,15 @@ export const PortalPage: React.FC = () => {
               activeTab === 'resources' ? 'text-[#4285F4] border-[#4285F4]' : 'text-slate-400 border-transparent hover:text-slate-900'
             }`}
           >
-            2. Resources & Shared Links
+            2. Resources
           </button>
           <button
-            onClick={() => setActiveTab('booking')}
+            onClick={() => setActiveTab('canva')}
             className={`pb-4 text-xs font-black tracking-widest uppercase outline-none transition-all border-b-2 relative ${
-              activeTab === 'booking' ? 'text-[#4285F4] border-[#4285F4]' : 'text-slate-400 border-transparent hover:text-slate-900'
+              activeTab === 'canva' ? 'text-[#4285F4] border-[#4285F4]' : 'text-slate-400 border-transparent hover:text-slate-900'
             }`}
           >
-            3. Book 1-on-1 Review
+            3. Canva Template
           </button>
         </div>
 
@@ -911,6 +931,22 @@ export const PortalPage: React.FC = () => {
               </div>
 
               <div className="space-y-6">
+                <div className="bg-gradient-to-br from-[#4285F4]/5 to-indigo-50/50 border border-[#4285F4]/10 rounded-2xl p-6 shadow-sm">
+                  <h5 className="font-bold text-slate-900 text-sm mb-1.5 flex items-center gap-2">
+                    <Calendar size={16} className="text-[#4285F4]" />
+                    Book 1-on-1 Review
+                  </h5>
+                  <p className="text-xs text-slate-500 mb-4 leading-relaxed font-medium">
+                    Optimize your LinkedIn headlines and review your drafts live with your mentor Zoom link.
+                  </p>
+                  <button 
+                    onClick={() => window.open('https://calendly.com', '_blank')}
+                    className="w-full bg-[#4285F4] text-white hover:bg-[#3b78e7] py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 shadow-md shadow-[#4285F4]/10 active:scale-[0.98]"
+                  >
+                    Schedule Call <ExternalLink size={10} />
+                  </button>
+                </div>
+
                 <div className="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm">
                   <h4 className="font-black text-slate-900 text-md uppercase tracking-wider mb-2 flex items-center gap-2">
                     <LinkIcon size={16} className="text-[#4285F4]" />
@@ -982,49 +1018,81 @@ export const PortalPage: React.FC = () => {
             </motion.div>
           )}
 
-          {activeTab === 'booking' && (
+          {activeTab === 'canva' && (
             <motion.div
-              key="booking-tab"
+              key="canva-tab"
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -15 }}
               transition={{ duration: 0.4 }}
-              className="max-w-3xl mx-auto"
+              className="space-y-6"
             >
-              <div className="bg-white border border-slate-100 rounded-[2.5rem] p-8 md:p-12 shadow-sm text-center relative overflow-hidden">
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-[#4285F4]/5 blur-[80px] rounded-full -z-10" />
-
-                <div className="w-14 h-14 bg-[#4285F4]/10 text-[#4285F4] rounded-2xl flex items-center justify-center mx-auto mb-6">
-                  <Calendar size={24} />
+              <div className="bg-white border border-slate-100 rounded-[2.5rem] p-6 md:p-8 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div className="space-y-1 flex-grow">
+                  <div className="flex items-center gap-3">
+                    <span className="bg-purple-100 text-purple-700 text-[9px] font-black uppercase px-2 py-0.5 rounded tracking-wider">
+                      Canva Template Workspace
+                    </span>
+                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Active Workspace</span>
+                  </div>
+                  <h4 className="font-bold text-slate-900 text-lg leading-snug">Personal Canva Resume Template</h4>
+                  {profile?.resumeLink ? (
+                    <p className="text-xs text-slate-500 font-semibold truncate max-w-xl">
+                      Template URL: <a href={profile.resumeLink} target="_blank" rel="noopener noreferrer" className="text-[#4285F4] hover:underline font-bold inline-flex items-center gap-1">{profile.resumeLink} <ExternalLink size={10} /></a>
+                    </p>
+                  ) : (
+                    <p className="text-xs text-amber-500 font-bold">
+                      ⚠️ No Canva template link assigned to your profile yet.
+                    </p>
+                  )}
                 </div>
 
-                <h3 className="text-2xl md:text-3xl font-black tracking-tight text-slate-900 mb-2">Book Your 1-on-1 Review Session</h3>
-                <p className="text-slate-500 text-sm max-w-md mx-auto mb-8 font-medium leading-relaxed">
-                  As part of your active enrollment, you get one-on-one session access with your mentor to dissect your resume drafts and optimize headlines live.
-                </p>
+                <div className="flex items-center gap-3 w-full md:w-auto">
+                  {profile?.resumeLink && (
+                    <button
+                      onClick={() => window.open(profile.resumeLink, '_blank')}
+                      className="bg-purple-600 hover:bg-purple-700 text-white px-5 py-3 rounded-xl font-bold text-xs uppercase tracking-widest transition-all whitespace-nowrap active:scale-[0.98] shadow-md shadow-purple-600/10 flex items-center gap-1.5"
+                    >
+                      <ExternalLink size={12} /> Open in Canva
+                    </button>
+                  )}
+                </div>
+              </div>
 
-                <div className="bg-slate-50 border border-slate-200/50 rounded-2xl p-6 max-w-md mx-auto mb-8 text-left space-y-4">
-                  <div className="flex items-start gap-3.5">
-                    <div className="w-6 h-6 bg-indigo-50 text-indigo-500 rounded-full flex items-center justify-center flex-shrink-0 font-bold text-xs mt-0.5">1</div>
-                    <p className="text-xs text-slate-600 font-bold leading-relaxed">Finalize your Module 1 Resume Draft first.</p>
+              {/* Embedding Canva iframe view */}
+              <div className="bg-white border border-slate-100 rounded-[2.5rem] p-6 shadow-sm space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div>
+                    <h5 className="font-bold text-slate-900 text-sm">Interactive Resume View</h5>
+                    <p className="text-xs text-slate-500 mt-0.5">Edit in Canva and watch the live preview synchronize below.</p>
                   </div>
-                  <div className="flex items-start gap-3.5">
-                    <div className="w-6 h-6 bg-indigo-50 text-indigo-500 rounded-full flex items-center justify-center flex-shrink-0 font-bold text-xs mt-0.5">2</div>
-                    <p className="text-xs text-slate-600 font-bold leading-relaxed">Choose a timeslot using the live calendar below.</p>
-                  </div>
-                  <div className="flex items-start gap-3.5">
-                    <div className="w-6 h-6 bg-indigo-50 text-indigo-500 rounded-full flex items-center justify-center flex-shrink-0 font-bold text-xs mt-0.5">3</div>
-                    <p className="text-xs text-slate-600 font-bold leading-relaxed">Our mentor will review and optimize your profile layout live via Zoom.</p>
+                  <div className="text-xs font-semibold text-slate-400 bg-slate-50 border border-slate-100 px-3 py-1 rounded-lg">
+                    Real-time Embed
                   </div>
                 </div>
 
-                <button
-                  onClick={() => window.open('https://calendly.com', '_blank')}
-                  className="bg-[#4285F4] text-white px-8 py-4.5 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-[#3b78e7] transition-all active:scale-[0.98] shadow-xl shadow-[#4285F4]/20 flex items-center justify-center gap-2 mx-auto"
-                >
-                  <Calendar size={14} />
-                  Access Calendly Scheduler <ExternalLink size={12} />
-                </button>
+                {profile?.resumeLink ? (
+                  <div className="w-full aspect-[4/3] bg-slate-50 border border-slate-100 rounded-3xl overflow-hidden relative shadow-inner flex flex-col items-center justify-center">
+                    <iframe 
+                      src={getEmbedUrl(profile.resumeLink)} 
+                      className="w-full h-full border-none rounded-3xl"
+                      allowFullScreen
+                      title="Canva Resume Template Preview"
+                    />
+                    <div className="absolute bottom-4 left-4 right-4 bg-slate-950/80 backdrop-blur-md px-4 py-2.5 rounded-2xl text-[10px] text-slate-300 font-semibold flex items-center justify-between pointer-events-none">
+                      <span>If your template doesn't render, open it directly using the button above.</span>
+                      <span className="font-black text-white">Canva Workspace</span>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="w-full aspect-[16/9] bg-slate-50 border border-dashed border-slate-200 rounded-3xl flex flex-col items-center justify-center p-8 text-center">
+                    <div className="w-12 h-12 bg-slate-100 text-slate-400 rounded-2xl flex items-center justify-center mb-3">
+                      <Layout size={20} />
+                    </div>
+                    <h5 className="font-bold text-slate-900 text-sm">No Template Assigned</h5>
+                    <p className="text-xs text-slate-400 max-w-sm mt-1">Once your mentor links your Canva Resume Template inside the Google Sheet database, it will display here automatically.</p>
+                  </div>
+                )}
               </div>
             </motion.div>
           )}
