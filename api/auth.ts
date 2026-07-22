@@ -115,7 +115,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     // 1. REGISTER
     if (action === 'register') {
-      const data = await sheetsApiRequest('GET', 'A:J');
+      const data = await sheetsApiRequest('GET', 'A:K');
       const rows = data.values || [];
 
       for (let i = 1; i < rows.length; i++) {
@@ -128,7 +128,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         }
       }
 
-      await sheetsApiRequest('POST', 'A:J', {
+      await sheetsApiRequest('POST', 'A:K', {
         values: [[
           studentId.trim(),
           name.trim(),
@@ -139,7 +139,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           'FALSE',
           'FALSE',
           new Date().toISOString(),
-          ''
+          '',
+          '' // Canva Link (Column K)
         ]]
       });
 
@@ -152,7 +153,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     // 2. LOGIN
     if (action === 'login') {
-      const data = await sheetsApiRequest('GET', 'A:J');
+      const data = await sheetsApiRequest('GET', 'A:K');
       const rows = data.values || [];
       const targetId = studentId.trim().toLowerCase();
 
@@ -195,7 +196,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             studentData[6]?.toString().toUpperCase() === 'TRUE',
             studentData[7]?.toString().toUpperCase() === 'TRUE'
           ],
-          resumeLink: studentData[9] || ''
+          resumeLink: studentData[9] || '',
+          canvaLink: studentData[10] || ''
         },
         isLiveSheet: true
       });

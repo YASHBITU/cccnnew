@@ -43,6 +43,8 @@ interface StudentProfile {
   name: string;
   email: string;
   phone: string;
+  resumeLink: string;
+  canvaLink?: string;
 }
 
 const getYoutubeId = (url: string) => {
@@ -148,19 +150,19 @@ export const PortalPage: React.FC = () => {
     },
     {
       id: 2,
-      title: "Session 2: LinkedIn Job Hunt Strategy (Daily Work) 🔥",
-      duration: "21:10",
-      description: "This is the most important part of CCC. Watch the LinkedIn Job Hunt Strategy video very carefully. Do not skip any minute of the video. At the end of the video there is the most useful thing. This includes the exact steps of Job Hunt strategy and Chrome extension usage. Start applying using this strategy. This is not a one-day task—you need to work on this daily for best results. Once you start getting Interview calls, inform CCC immediately. We’ll guide you on this.",
-      videoUrl: "https://drive.google.com/file/d/1vN9hL1tDbeeOwaCHXsmEC_telozT5FJV/view?usp=sharing",
-      thumbnail: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=640&auto=format&fit=crop"
-    },
-    {
-      id: 3,
-      title: "Session 3: LinkedIn Profile Optimization",
+      title: "Session 2: LinkedIn Profile Optimization",
       duration: "18:45",
       description: "Watch the LinkedIn Profile Optimization video. Apply everything step by step to your LinkedIn profile. Spend sufficient time optimizing your LinkedIn profile properly. Again, quality matters more than speed.",
       videoUrl: "https://drive.google.com/file/d/1KD0z96AiaAPqs02KAoQ1DE8peDFQeuTu/view?usp=sharing",
       thumbnail: "https://images.unsplash.com/photo-1616469829581-73993eb86b02?q=80&w=640&auto=format&fit=crop"
+    },
+    {
+      id: 3,
+      title: "Session 3: LinkedIn Job Hunt Strategy (Daily Work) 🔥",
+      duration: "21:10",
+      description: "This is the most important part of CCC. Watch the LinkedIn Job Hunt Strategy video very carefully. Do not skip any minute of the video. At the end of the video there is the most useful thing. This includes the exact steps of Job Hunt strategy and Chrome extension usage. Start applying using this strategy. This is not a one-day task—you need to work on this daily for best results. Once you start getting Interview calls, inform CCC immediately. We’ll guide you on this.",
+      videoUrl: "https://drive.google.com/file/d/1vN9hL1tDbeeOwaCHXsmEC_telozT5FJV/view?usp=sharing",
+      thumbnail: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=640&auto=format&fit=crop"
     }
   ];
 
@@ -224,7 +226,8 @@ export const PortalPage: React.FC = () => {
           name: data.student.name,
           email: data.student.email,
           phone: data.student.phone,
-          resumeLink: data.student.resumeLink || ''
+          resumeLink: data.student.resumeLink || '',
+          canvaLink: data.student.canvaLink || ''
         };
         setProfile(loadedProfile);
         localStorage.setItem('ccc_student_profile', JSON.stringify(loadedProfile));
@@ -281,7 +284,8 @@ export const PortalPage: React.FC = () => {
           name: name.trim(),
           email: email.trim(),
           phone: phone.trim(),
-          resumeLink: ''
+          resumeLink: '',
+          canvaLink: ''
         };
         setProfile(loadedProfile);
         localStorage.setItem('ccc_student_profile', JSON.stringify(loadedProfile));
@@ -308,7 +312,8 @@ export const PortalPage: React.FC = () => {
       name: 'Demo Student',
       email: 'demo@ccc.com',
       phone: '+61 412 345 678',
-      resumeLink: 'https://docs.google.com/document/d/1t-8Z-w9jI03o3UeK8k7c7N-N1vX_0l0u/copy'
+      resumeLink: 'https://docs.google.com/document/d/1t-8Z-w9jI03o3UeK8k7c7N-N1vX_0l0u/copy',
+      canvaLink: 'https://canva.link/6l4zlfikcjs8owu'
     };
     setProfile(loadedProfile);
     localStorage.setItem('ccc_student_profile', JSON.stringify(loadedProfile));
@@ -950,6 +955,39 @@ export const PortalPage: React.FC = () => {
                 </div>
 
                 <div className="grid gap-4">
+                  {/* Canva template section (mentor-assigned) */}
+                  <div className="bg-gradient-to-r from-purple-50 to-indigo-50/50 border border-purple-100 rounded-3xl p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6 mb-2">
+                    <div className="space-y-1.5 flex-grow">
+                      <div className="flex items-center gap-3">
+                        <span className="bg-purple-100 text-purple-700 text-[9px] font-black uppercase px-2 py-0.5 rounded tracking-wider">
+                          Canva Template
+                        </span>
+                        <span className="text-purple-300 font-light">|</span>
+                        <span className="text-[10px] text-purple-600 font-black uppercase tracking-wider">Mentor Assigned</span>
+                      </div>
+                      <h4 className="font-bold text-slate-900 text-lg leading-snug">Personal Canva Resume Template</h4>
+                      {profile?.canvaLink ? (
+                        <p className="text-xs text-slate-500 leading-relaxed font-medium">
+                          Your custom Canva Resume Template has been shared by your mentor! Use this layout exactly as explained in Session 1.
+                        </p>
+                      ) : (
+                        <p className="text-xs text-amber-600 leading-relaxed font-bold">
+                          ⚠️ Your Canva template has not been linked yet. Your mentor will update it here in your portal once they review your profile.
+                        </p>
+                      )}
+                    </div>
+                    
+                    {profile?.canvaLink && (
+                      <button
+                        onClick={() => window.open(profile.canvaLink, '_blank')}
+                        className="flex items-center gap-2 bg-purple-600 text-white hover:bg-purple-700 px-5 py-3 rounded-xl font-bold text-xs uppercase tracking-widest transition-all whitespace-nowrap shadow-md shadow-purple-600/10 active:scale-[0.98] self-start md:self-auto"
+                      >
+                        <ExternalLink size={12} />
+                        Edit in Canva
+                      </button>
+                    )}
+                  </div>
+
                   {customLinks.map((link) => (
                     <div 
                       key={link.id} 
