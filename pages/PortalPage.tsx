@@ -461,161 +461,46 @@ export const PortalPage: React.FC = () => {
           <h2 className="text-2xl font-black tracking-tight text-slate-900 text-center mb-1">Student Portal</h2>
           <p className="text-slate-400 text-center text-xs font-semibold mb-6 uppercase tracking-widest text-[8px]">Career Craft Consultancy Curriculum</p>
 
-          <AnimatePresence mode="wait">
-            {!isRegisterMode ? (
-              <motion.form 
-                key="login-form"
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 10 }}
-                onSubmit={handleLogin} 
-                className="space-y-4 text-left"
-              >
-                <div>
-                  <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 ml-1">Student ID or Email</label>
-                  <input 
-                    type="text" 
-                    required
-                    placeholder="student@example.com" 
-                    value={studentId}
-                    onChange={(e) => setStudentId(e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200/80 rounded-xl text-slate-950 font-semibold focus:outline-none focus:border-[#4285F4] focus:ring-1 focus:ring-[#4285F4] transition-all text-sm"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 ml-1">Password</label>
-                  <input 
-                    type="password" 
-                    required
-                    placeholder="••••••••" 
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200/80 rounded-xl text-slate-950 font-semibold focus:outline-none focus:border-[#4285F4] focus:ring-1 focus:ring-[#4285F4] transition-all text-sm"
-                  />
-                </div>
-
-                {authError && (
-                  <p className="text-rose-500 font-bold text-xs px-1">{authError}</p>
-                )}
-
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="w-full bg-[#4285F4] text-white py-3.5 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-[#3b78e7] transition-all active:scale-[0.98] shadow-lg shadow-[#4285F4]/20 flex items-center justify-center"
-                >
-                  {isLoading ? 'Unlocking...' : 'Unlock Portal'}
-                </button>
-              </motion.form>
-            ) : (
-              <motion.form 
-                key="register-form"
-                initial={{ opacity: 0, x: 10 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -10 }}
-                onSubmit={handleRegister} 
-                className="space-y-3 text-left"
-              >
-                <div>
-                  <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 ml-1">Full Name</label>
-                  <input 
-                    type="text" 
-                    required
-                    placeholder="John Doe" 
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200/80 rounded-xl text-slate-950 font-semibold focus:outline-none focus:border-[#4285F4] focus:ring-1 focus:ring-[#4285F4] transition-all text-xs"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 ml-1">Student ID (Custom)</label>
-                    <input 
-                      type="text" 
-                      required
-                      placeholder="CCC-101" 
-                      value={studentId}
-                      onChange={(e) => setStudentId(e.target.value)}
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200/80 rounded-xl text-slate-950 font-semibold focus:outline-none focus:border-[#4285F4] focus:ring-1 focus:ring-[#4285F4] transition-all text-xs"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 ml-1">Phone Number</label>
-                    <input 
-                      type="text" 
-                      required
-                      placeholder="+61 400 000 000" 
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200/80 rounded-xl text-slate-950 font-semibold focus:outline-none focus:border-[#4285F4] focus:ring-1 focus:ring-[#4285F4] transition-all text-xs"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 ml-1">Email Address</label>
-                  <input 
-                    type="email" 
-                    required
-                    placeholder="student@example.com" 
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200/80 rounded-xl text-slate-950 font-semibold focus:outline-none focus:border-[#4285F4] focus:ring-1 focus:ring-[#4285F4] transition-all text-xs"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 ml-1">Password</label>
-                  <input 
-                    type="password" 
-                    required
-                    placeholder="Set Password" 
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200/80 rounded-xl text-slate-950 font-semibold focus:outline-none focus:border-[#4285F4] focus:ring-1 focus:ring-[#4285F4] transition-all text-xs"
-                  />
-                </div>
-
-                {authError && (
-                  <p className="text-rose-500 font-bold text-xs px-1">{authError}</p>
-                )}
-
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="w-full bg-[#4285F4] text-white py-3 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-[#3b78e7] transition-all active:scale-[0.98] shadow-lg shadow-[#4285F4]/20 flex items-center justify-center"
-                >
-                  {isLoading ? 'Registering...' : 'Register & Log In'}
-                </button>
-              </motion.form>
-            )}
-          </AnimatePresence>
-
-          <div className="mt-4 text-center">
-            <button
-              onClick={() => {
-                setIsRegisterMode(!isRegisterMode);
-                setAuthError('');
-              }}
-              className="text-xs text-[#4285F4] font-bold hover:underline"
-            >
-              {isRegisterMode ? 'Already have an account? Log In' : "Don't have an account? Register"}
-            </button>
-          </div>
-
-          <div className="relative flex py-3 items-center">
-            <div className="flex-grow border-t border-slate-100"></div>
-            <span className="flex-shrink mx-3 text-[9px] text-slate-400 uppercase font-black tracking-widest">or</span>
-            <div className="flex-grow border-t border-slate-100"></div>
-          </div>
-
-          <button
-            onClick={handleDemoAccess}
-            className="w-full bg-slate-50 text-slate-600 py-3 rounded-xl font-bold text-xs hover:bg-slate-100 transition-all border border-slate-200/60 active:scale-[0.98]"
+          <form 
+            onSubmit={handleLogin} 
+            className="space-y-4 text-left"
           >
-            Quick Demo Preview
-          </button>
+            <div>
+              <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 ml-1">Student ID or Email</label>
+              <input 
+                type="text" 
+                required
+                placeholder="student@example.com" 
+                value={studentId}
+                onChange={(e) => setStudentId(e.target.value)}
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-200/80 rounded-xl text-slate-950 font-semibold focus:outline-none focus:border-[#4285F4] focus:ring-1 focus:ring-[#4285F4] transition-all text-sm"
+              />
+            </div>
+
+            <div>
+              <label className="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 ml-1">Password</label>
+              <input 
+                type="password" 
+                required
+                placeholder="••••••••" 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-200/80 rounded-xl text-slate-950 font-semibold focus:outline-none focus:border-[#4285F4] focus:ring-1 focus:ring-[#4285F4] transition-all text-sm"
+              />
+            </div>
+
+            {authError && (
+              <p className="text-rose-500 font-bold text-xs px-1">{authError}</p>
+            )}
+
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full bg-[#4285F4] text-white py-3.5 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-[#3b78e7] transition-all active:scale-[0.98] shadow-lg shadow-[#4285F4]/20 flex items-center justify-center"
+            >
+              {isLoading ? 'Unlocking...' : 'Unlock Portal'}
+            </button>
+          </form>
         </motion.div>
       </div>
     );
