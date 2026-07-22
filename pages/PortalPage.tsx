@@ -119,33 +119,41 @@ export const PortalPage: React.FC = () => {
     return saved ? JSON.parse(saved) : [];
   });
 
+  const LINKS_VERSION = 'v2';
+  const defaultLinks: SharedLink[] = [
+    {
+      id: '1',
+      title: 'ATS-Friendly Google Docs Resume Template',
+      url: 'https://drive.google.com/file/d/1_U6C3Zmw_2TbeJhHSF7eztUGzLNkXccl/view?usp=sharing',
+      description: 'Recruiter-optimized structural layouts matching single and double column specifications.',
+      category: 'Templates'
+    },
+    {
+      id: '2',
+      title: 'LinkedIn Positioning & Outreach Swipe File',
+      url: 'https://drive.google.com/file/d/1wyNLCdhdGJ74X2o4L5duVhpW1VuXfOZi/view?usp=sharing',
+      description: 'Ready-to-use template messages, connection request scripts, and email follow-ups for cold networking.',
+      category: 'Swipe Files'
+    },
+    {
+      id: '3',
+      title: '15-Day Job Search Action Matrix Checklist',
+      url: 'https://drive.google.com/file/d/1Sz0Lcr4Bkt4thdzJYl9hwWnKR2xXp0dm/view?usp=sharing',
+      description: 'A day-by-day step matrix mapping exactly how to perform targeted applications and check tasks.',
+      category: 'Guides'
+    }
+  ];
+
   const [customLinks, setCustomLinks] = useState<SharedLink[]>(() => {
+    const savedVersion = localStorage.getItem('ccc_shared_links_version');
+    if (savedVersion !== LINKS_VERSION) {
+      // New version — wipe old cache, use fresh defaults
+      localStorage.removeItem('ccc_shared_links');
+      localStorage.setItem('ccc_shared_links_version', LINKS_VERSION);
+      return defaultLinks;
+    }
     const saved = localStorage.getItem('ccc_shared_links');
-    if (saved) return JSON.parse(saved);
-    
-    return [
-      {
-        id: '1',
-        title: 'ATS-Friendly Google Docs Resume Template',
-        url: 'https://drive.google.com/file/d/1_U6C3Zmw_2TbeJhHSF7eztUGzLNkXccl/view?usp=sharing',
-        description: 'Recruiter-optimized structural layouts matching single and double column specifications.',
-        category: 'Templates'
-      },
-      {
-        id: '2',
-        title: 'LinkedIn Positioning & Outreach Swipe File',
-        url: 'https://drive.google.com/file/d/1wyNLCdhdGJ74X2o4L5duVhpW1VuXfOZi/view?usp=sharing',
-        description: 'Ready-to-use template messages, connection request scripts, and email follow-ups for cold networking.',
-        category: 'Swipe Files'
-      },
-      {
-        id: '3',
-        title: '15-Day Job Search Action Matrix Checklist',
-        url: 'https://drive.google.com/file/d/1Sz0Lcr4Bkt4thdzJYl9hwWnKR2xXp0dm/view?usp=sharing',
-        description: 'A day-by-day step matrix mapping exactly how to perform targeted applications and check tasks.',
-        category: 'Guides'
-      }
-    ];
+    return saved ? JSON.parse(saved) : defaultLinks;
   });
 
   const [newLinkTitle, setNewLinkTitle] = useState('');
@@ -543,9 +551,9 @@ export const PortalPage: React.FC = () => {
                 <Sparkles size={10} className="animate-pulse" /> CCC Career Academy
               </span>
               <span 
-                className="bg-emerald-50 text-emerald-600 border border-emerald-200/60 px-3.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5"
+                className="bg-[#4285F4]/10 text-[#4285F4] border border-[#4285F4]/20 px-3.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5"
               >
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#4285F4]" />
                 Verified Student
               </span>
             </div>
