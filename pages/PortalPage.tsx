@@ -381,13 +381,19 @@ export const PortalPage: React.FC = () => {
   };
 
   const handleVideoPlayToggle = () => {
-    if (videoRef.current) {
-      if (isPlaying) {
+    const nextPlaying = !isPlaying;
+    setIsPlaying(nextPlaying);
+    
+    if (nextPlaying) {
+      setTimeout(() => {
+        if (videoRef.current) {
+          videoRef.current.play().catch(err => console.log('Autoplay blocked:', err));
+        }
+      }, 50);
+    } else {
+      if (videoRef.current) {
         videoRef.current.pause();
-      } else {
-        videoRef.current.play();
       }
-      setIsPlaying(!isPlaying);
     }
   };
 
