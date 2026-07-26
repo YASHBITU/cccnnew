@@ -106,33 +106,41 @@ export const Home: React.FC = () => {
   return (
     <div className="animate-in fade-in duration-700 overflow-x-hidden">
       {/* Hero Section */}
-      <section className="pt-32 pb-24 md:pt-56 md:pb-32 hero-gradient relative">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <div className="inline-block px-4 py-1.5 mb-8 rounded-full border border-gray-100 bg-white text-[10px] font-bold tracking-[0.2em] uppercase text-gray-400 text-depth-callout">
+      <section className="pt-28 pb-16 md:pt-52 md:pb-28 hero-gradient relative">
+        <div className="max-w-7xl mx-auto px-5 md:px-6 text-center">
+          <div className="inline-block px-4 py-1.5 mb-6 rounded-full border border-gray-100 bg-white text-[10px] font-bold tracking-[0.2em] uppercase text-gray-400 text-depth-callout">
             Engineered for Results
           </div>
 
-          <h1 className="text-5xl md:text-8xl lg:text-9xl font-black tracking-tight text-slate-950 mb-8 max-w-5xl mx-auto leading-[0.9] text-depth-hero">
+          <h1 className="text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-black tracking-tight text-slate-950 mb-6 max-w-5xl mx-auto leading-[0.9] text-depth-hero">
             Not getting interview calls? <br />
             <span className="text-[#4285F4]">CCC is here.</span>
           </h1>
 
-          <p className="text-lg md:text-xl text-gray-500 max-w-2xl mx-auto mb-12 leading-relaxed font-medium text-depth-subheading">
+          <p className="text-base md:text-xl text-gray-500 max-w-2xl mx-auto mb-10 leading-relaxed font-medium text-depth-subheading">
             CCC helps freshers stop applying blindly and start getting real interview calls — with a proven, mentor-led system designed for high-conversion.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
             <button
               onClick={() => navigate('/pricing')}
-              className="w-full sm:w-auto bg-[#4285F4] text-white px-10 py-5 rounded-2xl font-bold text-lg hover:bg-[#3b78e7] transition-all shadow-2xl shadow-[#4285F4]/20 active:scale-95 text-depth-button"
+              className="w-full sm:w-auto bg-[#4285F4] text-white px-8 sm:px-10 py-4 sm:py-5 rounded-2xl font-bold text-base sm:text-lg hover:bg-[#3b78e7] transition-all shadow-2xl shadow-[#4285F4]/20 active:scale-95 text-depth-button"
             >
               Get Interview Calls
             </button>
             <button
               onClick={() => navigate('/services')}
-              className="w-full sm:w-auto bg-white text-slate-900 border border-slate-200 px-10 py-5 rounded-2xl font-bold text-lg hover:border-slate-400 transition-all active:scale-95 soft-shadow text-depth-callout"
+              className="w-full sm:w-auto bg-white text-slate-900 border border-slate-200 px-8 sm:px-10 py-4 sm:py-5 rounded-2xl font-bold text-base sm:text-lg hover:border-slate-400 transition-all active:scale-95 soft-shadow text-depth-callout"
             >
               See How It Works
+            </button>
+            <button
+              onClick={() => {
+                document.getElementById('placements-section')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="w-full sm:w-auto bg-slate-950 text-white px-8 sm:px-10 py-4 sm:py-5 rounded-2xl font-bold text-base sm:text-lg hover:bg-slate-800 transition-all active:scale-95"
+            >
+              🏆 Path to Placements
             </button>
           </div>
         </div>
@@ -199,7 +207,7 @@ export const Home: React.FC = () => {
       <FeaturesCards />
 
       {/* Premium Placements Carousel */}
-      <div className="bg-slate-50 border-t border-slate-100">
+      <div id="placements-section" className="bg-slate-50 border-t border-b border-slate-200">
         <PremiumCarousel />
       </div>
 
