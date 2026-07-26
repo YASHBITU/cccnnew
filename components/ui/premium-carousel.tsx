@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight, Linkedin, Star, Quote } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Linkedin, Star } from 'lucide-react';
 
 export const placements = [
     {
@@ -49,13 +49,8 @@ export function PremiumCarousel() {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isHovered, setIsHovered] = useState(false);
 
-    const nextSlide = () => {
-        setCurrentIndex((prev) => (prev + 1) % placements.length);
-    };
-
-    const prevSlide = () => {
-        setCurrentIndex((prev) => (prev === 0 ? placements.length - 1 : prev - 1));
-    };
+    const nextSlide = () => setCurrentIndex((prev) => (prev + 1) % placements.length);
+    const prevSlide = () => setCurrentIndex((prev) => (prev === 0 ? placements.length - 1 : prev - 1));
 
     useEffect(() => {
         if (isHovered) return;
@@ -67,159 +62,239 @@ export function PremiumCarousel() {
 
     return (
         <div className="w-full px-4 sm:px-6 lg:px-10 py-12 md:py-20">
+
             {/* Section Header */}
             <div className="text-center mb-8 md:mb-12">
                 <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 mb-3 tracking-tighter">
                     Path To Placements
                 </h2>
-                <p className="text-base md:text-lg text-slate-500 font-medium max-w-xl mx-auto px-4">
+                <p className="text-sm sm:text-base md:text-lg text-slate-500 font-medium max-w-xl mx-auto">
                     Meet the candidates who transformed their careers and landed top roles using our proven job-hunting strategy.
                 </p>
             </div>
 
-            {/* Card with border on both sides */}
+            {/* ─── MOBILE LAYOUT (< lg) ─── */}
             <div
-                className="relative bg-white rounded-2xl md:rounded-[2.5rem] shadow-2xl shadow-slate-200/60 border border-slate-200 overflow-hidden mx-auto max-w-5xl"
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
+                className="lg:hidden mx-auto max-w-md"
+                onTouchStart={() => setIsHovered(true)}
+                onTouchEnd={() => setIsHovered(false)}
             >
-                {/* Mobile layout: stacked | Desktop: side-by-side */}
-                <div className="flex flex-col lg:flex-row">
+                {/* Unified single card */}
+                <div className="rounded-3xl overflow-hidden border border-slate-200 shadow-xl shadow-slate-200/60 bg-white">
 
-                    {/* LEFT — Poster Image */}
-                    <div className="w-full lg:w-5/12 relative overflow-hidden bg-slate-100 lg:border-r border-slate-200">
-                        {/* Fixed height on mobile, full height on desktop */}
-                        <div className="relative h-[300px] sm:h-[380px] lg:h-full lg:min-h-[580px]">
-                            <AnimatePresence mode="wait">
-                                <motion.img
-                                    key={current.image}
-                                    src={current.image}
-                                    alt={current.name}
-                                    className="absolute inset-0 w-full h-full object-cover object-top"
-                                    initial={{ opacity: 0, scale: 1.04 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    exit={{ opacity: 0, scale: 0.97 }}
-                                    transition={{ duration: 0.5, ease: "easeOut" }}
-                                />
-                            </AnimatePresence>
+                    {/* Poster image — shows BOTTOM (face area) */}
+                    <div className="relative w-full overflow-hidden" style={{ height: '420px' }}>
+                        <AnimatePresence mode="wait">
+                            <motion.img
+                                key={current.image}
+                                src={current.image}
+                                alt={current.name}
+                                className="absolute inset-0 w-full h-full object-cover object-bottom"
+                                initial={{ opacity: 0, scale: 1.03 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.45 }}
+                            />
+                        </AnimatePresence>
 
-                            {/* Gradient overlay for name readability */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
+                        {/* Bottom gradient so name reads cleanly */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent pointer-events-none" />
 
-                            {/* Name + role overlay */}
-                            <div className="absolute bottom-0 left-0 w-full p-5 md:p-7 z-10">
-                                <AnimatePresence mode="wait">
-                                    <motion.div
-                                        key={current.id}
-                                        initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        exit={{ opacity: 0, y: -10 }}
-                                        transition={{ duration: 0.4, delay: 0.15 }}
-                                    >
-                                        <div className="flex flex-wrap items-center gap-2 mb-2">
-                                            <span className="bg-[#4285F4] text-white text-[10px] font-black px-3 py-1 rounded-full tracking-wider uppercase">
-                                                {current.ctc}
-                                            </span>
-                                            <span className="bg-white/15 backdrop-blur-md border border-white/20 text-white text-[10px] font-black px-3 py-1 rounded-full tracking-wider uppercase">
-                                                {current.company}
-                                            </span>
-                                        </div>
-                                        <h3 className="text-2xl sm:text-3xl font-black text-white tracking-tight leading-tight">
-                                            {current.name}
-                                        </h3>
-                                        <p className="text-[#4285F4] font-bold text-sm mt-0.5">
-                                            {current.role}
-                                        </p>
-                                    </motion.div>
-                                </AnimatePresence>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* RIGHT — Review */}
-                    <div className="w-full lg:w-7/12 p-6 sm:p-8 md:p-10 lg:p-14 flex flex-col justify-between relative bg-white border-t border-slate-100 lg:border-t-0">
-                        <Quote className="absolute top-6 right-6 w-16 h-16 md:w-20 md:h-20 text-slate-100 -rotate-12 opacity-60 pointer-events-none" />
-
-                        <div className="relative z-10 flex flex-col gap-6 h-full justify-center">
-                            {/* Stars */}
-                            <div className="flex gap-1">
-                                {[...Array(5)].map((_, i) => (
-                                    <div key={i} className="relative">
-                                        <div className="absolute inset-0 bg-amber-400 blur-[5px] opacity-40 rounded-full scale-110" />
-                                        <Star className="w-5 h-5 fill-amber-400 text-amber-500 relative z-10" />
-                                    </div>
-                                ))}
-                            </div>
-
-                            {/* Review text */}
-                            <AnimatePresence mode="wait">
-                                <motion.p
-                                    key={current.id}
-                                    className="text-base sm:text-lg md:text-xl lg:text-2xl leading-relaxed text-slate-700 font-medium italic tracking-tight"
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -10 }}
-                                    transition={{ duration: 0.4, delay: 0.2 }}
-                                >
-                                    "{current.review}"
-                                </motion.p>
-                            </AnimatePresence>
-
-                            {/* LinkedIn button */}
+                        {/* Name + badges pinned bottom-left */}
+                        <div className="absolute bottom-0 left-0 w-full px-5 pb-5 z-10">
                             <AnimatePresence mode="wait">
                                 <motion.div
-                                    key={`link-${current.id}`}
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
+                                    key={current.id}
+                                    initial={{ opacity: 0, y: 14 }}
+                                    animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0 }}
-                                    transition={{ duration: 0.4, delay: 0.3 }}
+                                    transition={{ duration: 0.35, delay: 0.1 }}
                                 >
-                                    <a
-                                        href={current.linkedin}
-                                        target="_blank"
-                                        rel="noreferrer"
-                                        className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#0A66C2]/10 text-[#0A66C2] rounded-full font-bold text-sm hover:bg-[#0A66C2]/20 transition-colors w-max"
-                                    >
-                                        <Linkedin className="w-4 h-4 fill-current" />
-                                        Connect on LinkedIn
-                                    </a>
+                                    <div className="flex flex-wrap gap-1.5 mb-2">
+                                        <span className="bg-[#4285F4] text-white text-[10px] font-black px-2.5 py-1 rounded-full tracking-wide uppercase">
+                                            {current.ctc}
+                                        </span>
+                                        <span className="bg-white/15 backdrop-blur-md border border-white/25 text-white text-[10px] font-black px-2.5 py-1 rounded-full tracking-wide uppercase">
+                                            {current.company}
+                                        </span>
+                                    </div>
+                                    <p className="text-2xl font-black text-white tracking-tight leading-none">{current.name}</p>
+                                    <p className="text-[#4285F4] font-bold text-sm mt-1">{current.role}</p>
                                 </motion.div>
                             </AnimatePresence>
                         </div>
+                    </div>
 
-                        {/* Navigation dots + arrows */}
-                        <div className="flex items-center gap-2 mt-8 pt-6 border-t border-slate-100">
+                    {/* Review panel */}
+                    <div className="px-5 pt-5 pb-4 bg-white">
+                        {/* Stars */}
+                        <div className="flex gap-1 mb-3">
+                            {[...Array(5)].map((_, i) => (
+                                <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
+                            ))}
+                        </div>
+
+                        {/* Quote */}
+                        <AnimatePresence mode="wait">
+                            <motion.p
+                                key={current.id}
+                                className="text-sm leading-relaxed text-slate-600 font-medium italic mb-4 line-clamp-4"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.35, delay: 0.15 }}
+                            >
+                                "{current.review}"
+                            </motion.p>
+                        </AnimatePresence>
+
+                        {/* LinkedIn */}
+                        <a
+                            href={current.linkedin}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#0A66C2]/10 text-[#0A66C2] rounded-full font-bold text-xs hover:bg-[#0A66C2]/20 transition-colors mb-4"
+                        >
+                            <Linkedin className="w-3.5 h-3.5 fill-current" />
+                            Connect on LinkedIn
+                        </a>
+
+                        {/* Navigation — full width bottom bar */}
+                        <div className="flex items-center justify-between pt-3 border-t border-slate-100">
                             <button
                                 onClick={prevSlide}
-                                className="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-600 transition-all active:scale-95"
+                                className="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-100 text-slate-600 active:scale-90 transition-all"
                                 aria-label="Previous"
                             >
-                                <ChevronLeft className="w-5 h-5" />
+                                <ChevronLeft className="w-4 h-4" />
                             </button>
 
-                            <div className="flex gap-1.5 px-2">
+                            <div className="flex gap-1.5">
                                 {placements.map((_, index) => (
                                     <button
                                         key={index}
                                         onClick={() => setCurrentIndex(index)}
-                                        className={`h-2 rounded-full transition-all duration-300 ${
-                                            index === currentIndex
-                                                ? "w-7 bg-[#4285F4]"
-                                                : "w-2 bg-slate-200 hover:bg-slate-300"
+                                        className={`h-1.5 rounded-full transition-all duration-300 ${
+                                            index === currentIndex ? 'w-6 bg-[#4285F4]' : 'w-1.5 bg-slate-200'
                                         }`}
-                                        aria-label={`Go to slide ${index + 1}`}
+                                        aria-label={`Slide ${index + 1}`}
                                     />
                                 ))}
                             </div>
 
                             <button
                                 onClick={nextSlide}
-                                className="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-600 transition-all active:scale-95"
+                                className="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-100 text-slate-600 active:scale-90 transition-all"
                                 aria-label="Next"
                             >
+                                <ChevronRight className="w-4 h-4" />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* ─── DESKTOP LAYOUT (≥ lg) ─── */}
+            <div
+                className="hidden lg:block mx-auto max-w-5xl"
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+            >
+                <div className="rounded-[2.5rem] overflow-hidden border border-slate-200 shadow-2xl shadow-slate-200/50 bg-white flex flex-row">
+
+                    {/* Left: Image */}
+                    <div className="w-5/12 relative min-h-[580px] bg-slate-100 border-r border-slate-200 overflow-hidden">
+                        <AnimatePresence mode="wait">
+                            <motion.img
+                                key={current.image}
+                                src={current.image}
+                                alt={current.name}
+                                className="absolute inset-0 w-full h-full object-cover object-bottom"
+                                initial={{ opacity: 0, scale: 1.04 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.97 }}
+                                transition={{ duration: 0.5 }}
+                            />
+                        </AnimatePresence>
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent pointer-events-none" />
+                        <div className="absolute bottom-0 left-0 w-full p-8 z-10">
+                            <AnimatePresence mode="wait">
+                                <motion.div
+                                    key={current.id}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{ duration: 0.4, delay: 0.15 }}
+                                >
+                                    <div className="flex flex-wrap gap-2 mb-3">
+                                        <span className="bg-[#4285F4] text-white text-xs font-black px-3 py-1.5 rounded-full tracking-wider uppercase">
+                                            {current.ctc}
+                                        </span>
+                                        <span className="bg-white/15 backdrop-blur-md border border-white/25 text-white text-xs font-black px-3 py-1.5 rounded-full tracking-wider uppercase">
+                                            {current.company}
+                                        </span>
+                                    </div>
+                                    <h3 className="text-4xl font-black text-white tracking-tight leading-none mb-1">
+                                        {current.name}
+                                    </h3>
+                                    <p className="text-[#4285F4] font-bold text-lg">{current.role}</p>
+                                </motion.div>
+                            </AnimatePresence>
+                        </div>
+                    </div>
+
+                    {/* Right: Review */}
+                    <div className="w-7/12 p-12 xl:p-16 flex flex-col justify-between bg-white">
+                        <div className="flex flex-col gap-6 flex-grow justify-center">
+                            <div className="flex gap-1.5">
+                                {[...Array(5)].map((_, i) => (
+                                    <div key={i} className="relative">
+                                        <div className="absolute inset-0 bg-amber-400 blur-[5px] opacity-40 rounded-full scale-110" />
+                                        <Star className="w-6 h-6 fill-amber-400 text-amber-400 relative z-10" />
+                                    </div>
+                                ))}
+                            </div>
+                            <AnimatePresence mode="wait">
+                                <motion.p
+                                    key={current.id}
+                                    className="text-xl xl:text-2xl leading-relaxed text-slate-700 font-medium italic tracking-tight"
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{ duration: 0.4, delay: 0.2 }}
+                                >
+                                    "{current.review}"
+                                </motion.p>
+                            </AnimatePresence>
+                            <a
+                                href={current.linkedin}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#0A66C2]/10 text-[#0A66C2] rounded-full font-bold text-sm hover:bg-[#0A66C2]/20 transition-colors w-max"
+                            >
+                                <Linkedin className="w-4 h-4 fill-current" />
+                                Connect on LinkedIn
+                            </a>
+                        </div>
+
+                        {/* Nav */}
+                        <div className="flex items-center gap-3 mt-10 pt-6 border-t border-slate-100">
+                            <button onClick={prevSlide} className="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-600 transition-all active:scale-95" aria-label="Previous">
+                                <ChevronLeft className="w-5 h-5" />
+                            </button>
+                            <div className="flex gap-1.5">
+                                {placements.map((_, index) => (
+                                    <button
+                                        key={index}
+                                        onClick={() => setCurrentIndex(index)}
+                                        className={`h-2 rounded-full transition-all duration-300 ${index === currentIndex ? 'w-8 bg-[#4285F4]' : 'w-2 bg-slate-200 hover:bg-slate-300'}`}
+                                        aria-label={`Slide ${index + 1}`}
+                                    />
+                                ))}
+                            </div>
+                            <button onClick={nextSlide} className="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-600 transition-all active:scale-95" aria-label="Next">
                                 <ChevronRight className="w-5 h-5" />
                             </button>
-
                             <span className="ml-auto text-xs font-bold text-slate-300 uppercase tracking-widest">
                                 {currentIndex + 1} / {placements.length}
                             </span>
