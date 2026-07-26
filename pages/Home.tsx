@@ -86,7 +86,7 @@ export const Home: React.FC = () => {
       id: '8',
       name: 'Suhani',
       role: 'Data Analyst Intern',
-      title: 'Really works for freshers.',
+      title: 'Really works for job seekers.',
       content: 'As a fresher, it’s very difficult to get internship opportunities. But this LinkedIn Job Hunt Strategy really works. The service cost is totally worth it.',
       avatar: 'https://lh3.googleusercontent.com/d/1tV6KViP7Q48KGYOiaG6MkkQNb9uiBUMM',
       bgColor: 'bg-slate-900',
@@ -118,7 +118,7 @@ export const Home: React.FC = () => {
           </h1>
 
           <p className="text-base md:text-xl text-gray-500 max-w-2xl mx-auto mb-10 leading-relaxed font-medium text-depth-subheading">
-            CCC helps freshers stop applying blindly and start getting real interview calls — with a proven, mentor-led system designed for high-conversion.
+            CCC helps job seekers stop applying blindly and start getting real interview calls — with a proven, mentor-led system designed for high-conversion.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
@@ -133,14 +133,6 @@ export const Home: React.FC = () => {
               className="w-full sm:w-auto bg-white text-slate-900 border border-slate-200 px-8 sm:px-10 py-4 sm:py-5 rounded-2xl font-bold text-base sm:text-lg hover:border-slate-400 transition-all active:scale-95 soft-shadow text-depth-callout"
             >
               See How It Works
-            </button>
-            <button
-              onClick={() => {
-                document.getElementById('placements-section')?.scrollIntoView({ behavior: 'smooth' });
-              }}
-              className="w-full sm:w-auto bg-slate-950 text-white px-8 sm:px-10 py-4 sm:py-5 rounded-2xl font-bold text-base sm:text-lg hover:bg-slate-800 transition-all active:scale-95"
-            >
-              🏆 Path to Placements
             </button>
           </div>
         </div>

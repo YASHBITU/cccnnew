@@ -15,7 +15,7 @@ export const Hero: React.FC = () => {
         </h1>
         
         <p className="text-xl text-gray-500 max-w-2xl mx-auto mb-12 leading-relaxed">
-          A structured, mentor-led job hunt system designed for freshers who are tired of being ignored. We build systems, not just resumes.
+          A structured, mentor-led job hunt system designed for job seekers who are tired of being ignored. We build systems, not just resumes.
         </p>
         
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">

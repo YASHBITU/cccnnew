@@ -40,7 +40,7 @@ export const About: React.FC = () => {
             We’re your job hunt partner — <span className="text-[#4285F4]">not a course.</span>
           </h1>
           <p className="text-lg md:text-xl text-gray-500 font-medium leading-relaxed text-depth-subheading">
-            Career Craft Consultancy was built for students and freshers stuck in the “apply more” trap. We don’t sell motivation. We build strategy, execution, and results.
+            Career Craft Consultancy was built for job seekers stuck in the "apply more" trap — whether you're a fresher or an experienced professional. We don't sell motivation. We build strategy, execution, and results.
           </p>
         </div>
 
