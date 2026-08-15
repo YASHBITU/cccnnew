@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ShieldCheck, Sparkles, Timer } from 'lucide-react';
 
-const CountdownTimer: React.FC<{ country: string | null }> = ({ country }) => {
+const CountdownTimer: React.FC = () => {
   const [timeLeft, setTimeLeft] = useState({
     hours: '00',
     minutes: '00',
@@ -13,17 +13,14 @@ const CountdownTimer: React.FC<{ country: string | null }> = ({ country }) => {
   useEffect(() => {
     const calculateTimeLeft = () => {
       const now = new Date();
-      const timeZone = country === 'AU' ? 'Australia/Sydney' : 'Asia/Kolkata';
-
       try {
         const formatter = new Intl.DateTimeFormat('en-US', {
-          timeZone,
+          timeZone: 'Asia/Kolkata',
           hour: 'numeric',
           minute: 'numeric',
           second: 'numeric',
           hourCycle: 'h23'
         });
-
         const parts = formatter.formatToParts(now);
         let hour = 0, minute = 0, second = 0;
         parts.forEach(p => {
@@ -31,20 +28,16 @@ const CountdownTimer: React.FC<{ country: string | null }> = ({ country }) => {
           if (p.type === 'minute') minute = parseInt(p.value, 10);
           if (p.type === 'second') second = parseInt(p.value, 10);
         });
-
         const diffInSeconds = (24 * 3600) - (hour * 3600 + minute * 60 + second);
-
         const h = Math.floor(diffInSeconds / 3600) % 24;
         const m = Math.floor((diffInSeconds % 3600) / 60);
         const s = diffInSeconds % 60;
-
         setTimeLeft({
           hours: h.toString().padStart(2, '0'),
           minutes: m.toString().padStart(2, '0'),
           seconds: s.toString().padStart(2, '0')
         });
       } catch (e) {
-        // Fallback to local time if Intl format fails
         const midnight = new Date();
         midnight.setHours(24, 0, 0, 0);
         const diff = midnight.getTime() - now.getTime();
@@ -62,7 +55,7 @@ const CountdownTimer: React.FC<{ country: string | null }> = ({ country }) => {
     calculateTimeLeft();
     const interval = setInterval(calculateTimeLeft, 1000);
     return () => clearInterval(interval);
-  }, [country]);
+  }, []);
 
   return (
     <div className="flex flex-col items-center gap-2 mb-8 animate-in fade-in slide-in-from-bottom-2 duration-1000">
@@ -87,7 +80,6 @@ const CountdownTimer: React.FC<{ country: string | null }> = ({ country }) => {
 };
 
 export const PricingPage: React.FC = () => {
-  const [country, setCountry] = useState<string | null>(null);
   const [paying, setPaying] = useState(false);
 
   // Load Razorpay checkout script
@@ -99,26 +91,10 @@ export const PricingPage: React.FC = () => {
     return () => { document.body.removeChild(script); };
   }, []);
 
-  useEffect(() => {
-    fetch('/api/geo')
-      .then(res => res.json())
-      .then(data => { setCountry(data.country || 'IN'); })
-      .catch(() => { setCountry('IN'); });
-  }, []);
-
   const handleEnrollClick = () => {
-    if (!country) return;
-
-    // For Australia — keep existing link (Razorpay is India-only)
-    if (country === 'AU') {
-      window.open('https://rzp.io/rzp/23u3EB8', '_blank');
-      return;
-    }
-
-    // India — inline Razorpay Checkout popup
     const RazorpayConstructor = (window as any).Razorpay;
     if (!RazorpayConstructor) {
-      // Fallback if script hasn't loaded
+      // Fallback if script hasn't loaded yet
       window.open('https://rzp.io/rzp/L3WYf37s', '_blank');
       return;
     }
@@ -126,8 +102,8 @@ export const PricingPage: React.FC = () => {
     setPaying(true);
 
     const options = {
-      key: 'rzp_live_Rrn18qmhAxMGef',   // Key ID only — secret stays on server
-      amount: 99900,                       // Amount in paise (₹999 = 99900 paise)
+      key: 'rzp_live_Rrn18qmhAxMGef',
+      amount: 99900,             // ₹999 in paise
       currency: 'INR',
       name: 'Career Craft Consultancy',
       description: 'Job Hunt Kickstart — Resume + LinkedIn + Strategy',
@@ -138,7 +114,6 @@ export const PricingPage: React.FC = () => {
       },
       handler: (response: any) => {
         setPaying(false);
-        // Payment successful
         alert(`Payment successful! Payment ID: ${response.razorpay_payment_id}\n\nWelcome to CCC! Our team will reach out within 24 hours.`);
       },
     };
@@ -172,21 +147,17 @@ export const PricingPage: React.FC = () => {
 
             <div className="flex flex-col mb-8 relative z-10">
               <div className="flex items-center gap-3 mb-2">
-                <span className="text-base md:text-lg text-gray-400 line-through font-bold">
-                  {!country ? <span className="inline-block w-20 h-5 bg-gray-200 animate-pulse rounded"></span> : (country === 'AU' ? '500 AUD' : '₹4,999.00')}
-                </span>
+                <span className="text-base md:text-lg text-gray-400 line-through font-bold">₹4,999.00</span>
                 <span className="bg-[#4285F4]/10 text-[#4285F4] text-[9px] md:text-[10px] font-black px-2 py-1 rounded text-depth-callout">SAVE 80%</span>
               </div>
               <div className="flex items-baseline gap-2 md:gap-3">
-                <span className="text-5xl md:text-7xl font-black text-slate-950 text-depth-heading tracking-tighter">
-                  {!country ? <span className="inline-block w-40 h-16 bg-gray-200 animate-pulse rounded"></span> : (country === 'AU' ? '99 AUD' : '₹999')}
-                </span>
+                <span className="text-5xl md:text-7xl font-black text-slate-950 text-depth-heading tracking-tighter">₹999</span>
                 <span className="text-gray-400 font-bold uppercase tracking-widest text-[10px] md:text-xs">One-Time Payment</span>
               </div>
             </div>
 
-            {/* Countdown Timer Component */}
-            <CountdownTimer country={country} />
+            {/* Countdown Timer */}
+            <CountdownTimer />
 
             <div className="grid gap-4 md:gap-5 mb-10 md:mb-16 relative z-10">
               {[
@@ -209,15 +180,15 @@ export const PricingPage: React.FC = () => {
 
             <button
               onClick={handleEnrollClick}
-              disabled={!country || paying}
+              disabled={paying}
               className={`w-full bg-[#4285F4] text-white py-5 md:py-6 rounded-[1.5rem] md:rounded-3xl font-black text-lg md:text-xl transition-all shadow-xl shadow-[#4285F4]/20 active:scale-95 uppercase tracking-widest text-depth-button relative z-10 ${
-                !country || paying ? 'opacity-60 cursor-not-allowed' : 'hover:bg-[#3b78e7]'
+                paying ? 'opacity-60 cursor-not-allowed' : 'hover:bg-[#3b78e7]'
               }`}
             >
-              {paying ? 'Opening Payment…' : country ? 'Enroll Now' : 'Loading...'}
+              {paying ? 'Opening Payment…' : 'Enroll Now'}
             </button>
 
-            {/* Premium Animated Money-Back Guarantee Section */}
+            {/* Money-Back Guarantee */}
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -229,23 +200,18 @@ export const PricingPage: React.FC = () => {
               }}
               className="mt-8 md:mt-12 p-6 md:p-8 bg-gray-50/50 rounded-2xl md:rounded-[2.5rem] border border-gray-100 text-center relative overflow-hidden group transition-all duration-500 shadow-sm"
             >
-              {/* Premium "Sweep" Reflection Effect */}
               <motion.div
                 animate={{ x: ["-100%", "200%"] }}
                 transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", repeatDelay: 4 }}
                 className="absolute inset-0 w-1/3 h-[200%] bg-gradient-to-r from-transparent via-white/40 to-transparent pointer-events-none -skew-x-12 z-20"
                 style={{ top: '-50%' }}
               />
-
-              {/* Glowing Background Pulse */}
               <div className="absolute inset-0 bg-emerald-500/0 group-hover:bg-emerald-500/[0.02] transition-colors duration-700" />
 
               <div className="flex items-center justify-center gap-3 mb-3 relative z-10">
                 <p className="text-slate-800 font-black text-sm md:text-lg tracking-tight text-depth-subheading">
                   15-Day Money-Back Guarantee
                 </p>
-
-                {/* Verified Premium Green Tick Container */}
                 <div className="relative">
                   <motion.div
                     animate={{ scale: [1, 1.4, 1], opacity: [0.5, 0, 0.5] }}
@@ -262,7 +228,6 @@ export const PricingPage: React.FC = () => {
                 No interview calls within 15 days? We refund your full amount. <span className="text-emerald-600">No questions asked.</span>
               </p>
 
-              {/* Floating micro-ornaments */}
               <div className="absolute top-2 right-4 opacity-0 group-hover:opacity-40 transition-opacity duration-700">
                 <Sparkles size={16} className="text-emerald-400" />
               </div>
