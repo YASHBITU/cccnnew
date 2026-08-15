@@ -88,23 +88,67 @@ const CountdownTimer: React.FC<{ country: string | null }> = ({ country }) => {
 
 export const PricingPage: React.FC = () => {
   const [country, setCountry] = useState<string | null>(null);
+  const [paying, setPaying] = useState(false);
+
+  // Load Razorpay checkout script
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.async = true;
+    document.body.appendChild(script);
+    return () => { document.body.removeChild(script); };
+  }, []);
 
   useEffect(() => {
     fetch('/api/geo')
       .then(res => res.json())
-      .then(data => {
-        setCountry(data.country || 'IN');
-      })
-      .catch(err => {
-        console.error("Error fetching geo:", err);
-        setCountry('IN');
-      });
+      .then(data => { setCountry(data.country || 'IN'); })
+      .catch(() => { setCountry('IN'); });
   }, []);
 
   const handleEnrollClick = () => {
     if (!country) return;
-    const link = country === 'AU' ? 'https://rzp.io/rzp/23u3EB8' : 'https://rzp.io/rzp/L3WYf37s';
-    window.open(link, '_blank');
+
+    // For Australia — keep existing link (Razorpay is India-only)
+    if (country === 'AU') {
+      window.open('https://rzp.io/rzp/23u3EB8', '_blank');
+      return;
+    }
+
+    // India — inline Razorpay Checkout popup
+    const RazorpayConstructor = (window as any).Razorpay;
+    if (!RazorpayConstructor) {
+      // Fallback if script hasn't loaded
+      window.open('https://rzp.io/rzp/L3WYf37s', '_blank');
+      return;
+    }
+
+    setPaying(true);
+
+    const options = {
+      key: 'rzp_live_Rrn18qmhAxMGef',   // Key ID only — secret stays on server
+      amount: 99900,                       // Amount in paise (₹999 = 99900 paise)
+      currency: 'INR',
+      name: 'Career Craft Consultancy',
+      description: 'Job Hunt Kickstart — Resume + LinkedIn + Strategy',
+      image: 'https://cccnnew.vercel.app/favicon.ico',
+      theme: { color: '#4285F4' },
+      modal: {
+        ondismiss: () => setPaying(false),
+      },
+      handler: (response: any) => {
+        setPaying(false);
+        // Payment successful
+        alert(`Payment successful! Payment ID: ${response.razorpay_payment_id}\n\nWelcome to CCC! Our team will reach out within 24 hours.`);
+      },
+    };
+
+    const rzp = new RazorpayConstructor(options);
+    rzp.on('payment.failed', () => {
+      setPaying(false);
+      alert('Payment failed. Please try again or contact us on WhatsApp.');
+    });
+    rzp.open();
   };
 
   return (
@@ -165,10 +209,12 @@ export const PricingPage: React.FC = () => {
 
             <button
               onClick={handleEnrollClick}
-              disabled={!country}
-              className={`w-full bg-[#4285F4] text-white py-5 md:py-6 rounded-[1.5rem] md:rounded-3xl font-black text-lg md:text-xl transition-all shadow-xl shadow-[#4285F4]/20 active:scale-95 uppercase tracking-widest text-depth-button relative z-10 ${!country ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[#3b78e7]'}`}
+              disabled={!country || paying}
+              className={`w-full bg-[#4285F4] text-white py-5 md:py-6 rounded-[1.5rem] md:rounded-3xl font-black text-lg md:text-xl transition-all shadow-xl shadow-[#4285F4]/20 active:scale-95 uppercase tracking-widest text-depth-button relative z-10 ${
+                !country || paying ? 'opacity-60 cursor-not-allowed' : 'hover:bg-[#3b78e7]'
+              }`}
             >
-              {country ? 'Enroll Now' : 'Loading...'}
+              {paying ? 'Opening Payment…' : country ? 'Enroll Now' : 'Loading...'}
             </button>
 
             {/* Premium Animated Money-Back Guarantee Section */}
