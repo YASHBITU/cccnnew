@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ShieldCheck, Sparkles, Timer } from 'lucide-react';
@@ -80,50 +79,9 @@ const CountdownTimer: React.FC = () => {
 };
 
 export const PricingPage: React.FC = () => {
-  const [paying, setPaying] = useState(false);
-
-  // Load Razorpay checkout script
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-    script.async = true;
-    document.body.appendChild(script);
-    return () => { document.body.removeChild(script); };
-  }, []);
 
   const handleEnrollClick = () => {
-    const RazorpayConstructor = (window as any).Razorpay;
-    if (!RazorpayConstructor) {
-      // Fallback if script hasn't loaded yet
-      window.open('https://rzp.io/rzp/L3WYf37s', '_blank');
-      return;
-    }
-
-    setPaying(true);
-
-    const options = {
-      key: 'rzp_live_Rrn18qmhAxMGef',
-      amount: 99900,             // ₹999 in paise
-      currency: 'INR',
-      name: 'Career Craft Consultancy',
-      description: 'Job Hunt Kickstart — Resume + LinkedIn + Strategy',
-      image: 'https://cccnnew.vercel.app/favicon.ico',
-      theme: { color: '#4285F4' },
-      modal: {
-        ondismiss: () => setPaying(false),
-      },
-      handler: (response: any) => {
-        setPaying(false);
-        alert(`Payment successful! Payment ID: ${response.razorpay_payment_id}\n\nWelcome to CCC! Our team will reach out within 24 hours.`);
-      },
-    };
-
-    const rzp = new RazorpayConstructor(options);
-    rzp.on('payment.failed', () => {
-      setPaying(false);
-      alert('Payment failed. Please try again or contact us on WhatsApp.');
-    });
-    rzp.open();
+    window.open('https://rzp.io/rzp/L3WYf37s', '_blank');
   };
 
   return (
@@ -180,12 +138,9 @@ export const PricingPage: React.FC = () => {
 
             <button
               onClick={handleEnrollClick}
-              disabled={paying}
-              className={`w-full bg-[#4285F4] text-white py-5 md:py-6 rounded-[1.5rem] md:rounded-3xl font-black text-lg md:text-xl transition-all shadow-xl shadow-[#4285F4]/20 active:scale-95 uppercase tracking-widest text-depth-button relative z-10 ${
-                paying ? 'opacity-60 cursor-not-allowed' : 'hover:bg-[#3b78e7]'
-              }`}
+              className="w-full bg-[#4285F4] text-white py-5 md:py-6 rounded-[1.5rem] md:rounded-3xl font-black text-lg md:text-xl transition-all shadow-xl shadow-[#4285F4]/20 active:scale-95 uppercase tracking-widest text-depth-button relative z-10 hover:bg-[#3b78e7]"
             >
-              {paying ? 'Opening Payment…' : 'Enroll Now'}
+              Enroll Now
             </button>
 
             {/* Money-Back Guarantee */}

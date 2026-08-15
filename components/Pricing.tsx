@@ -11,24 +11,7 @@ export const Pricing: React.FC = () => {
   ];
 
   const handleGetStarted = () => {
-    const RazorpayConstructor = (window as any).Razorpay;
-    if (!RazorpayConstructor) {
-      window.open('https://rzp.io/rzp/L3WYf37s', '_blank');
-      return;
-    }
-    const options = {
-      key: 'rzp_live_Rrn18qmhAxMGef',
-      amount: 99900,
-      currency: 'INR',
-      name: 'Career Craft Consultancy',
-      description: 'Job Hunt Kickstart — Resume + LinkedIn + Strategy',
-      theme: { color: '#4285F4' },
-      handler: (response: any) => {
-        alert(`Payment successful! Payment ID: ${response.razorpay_payment_id}\n\nWelcome to CCC! Our team will reach out within 24 hours.`);
-      },
-    };
-    const rzp = new RazorpayConstructor(options);
-    rzp.open();
+    window.open('https://rzp.io/rzp/L3WYf37s', '_blank');
   };
 
   return (
