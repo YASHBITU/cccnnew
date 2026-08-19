@@ -24,9 +24,7 @@ export const Guarantee: React.FC = () => {
           <p className="text-xl md:text-2xl text-slate-800 leading-relaxed font-medium">
             If you follow the process and don’t receive at least one interview call within 15 days, we refund you.
           </p>
-          <p className="mt-6 text-sm text-gray-400 uppercase tracking-widest font-semibold">
-            No small print. No questions asked.
-          </p>
+
         </div>
       </div>
     </section>

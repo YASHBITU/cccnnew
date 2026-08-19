@@ -180,7 +180,7 @@ export const PricingPage: React.FC = () => {
               </div>
 
               <p className="text-xs md:text-base text-gray-500 leading-relaxed font-bold text-depth-callout relative z-10 max-w-sm mx-auto">
-                No interview calls within 15 days? We refund your full amount. <span className="text-emerald-600">No questions asked.</span>
+                No interview calls within 15 days? We refund your full amount.
               </p>
 
               <div className="absolute top-2 right-4 opacity-0 group-hover:opacity-40 transition-opacity duration-700">
