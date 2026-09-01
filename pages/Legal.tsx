@@ -15,7 +15,7 @@ export const Legal: React.FC<LegalProps> = ({ type }) => {
     },
     terms: {
       title: "Terms & Conditions",
-      body: `Use of the CCC platform and services is subject to these terms. All intellectual property, frameworks, and strategies shared during the mentorship are owned by Career Craft Consultancy. Users are prohibited from redistributing or reselling any proprietary materials provided. We reserve the right to modify services or pricing at our discretion.\n\n⚠️ NOTE: Roles that are not available on LinkedIn are not covered by CCC. CCC will not be responsible if your desired job role is not available on LinkedIn or if you are unable to find suitable openings for that role.\n\nFor example: Telecaller, Sales Coordinator, KYC Executive, Call Centre Executive, etc.`
+      body: `Use of the CCC platform and services is subject to these terms. All intellectual property, frameworks, and strategies shared during the mentorship are owned by Career Craft Consultancy. Users are prohibited from redistributing or reselling any proprietary materials provided. We reserve the right to modify services or pricing at our discretion.\n\n⚠️ NOTE: Roles that are not available on LinkedIn are not covered by CCC. CCC will not be responsible if your desired job role is not available on LinkedIn or if you are unable to find suitable openings for that role.\n\nFor example: Telecaller, Sales Coordinator, KYC Executive, Call Centre Executive, etc. (or any role which you are not able to find on LinkedIn).`
     },
     refund: {
       title: "Cancellation & Refund Policy",
