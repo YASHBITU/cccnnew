@@ -6,6 +6,7 @@ import TextMarquee from '../components/ui/text-marque';
 import { TestimonialStack, Testimonial } from '../components/ui/testimonial-stack';
 import { TestimonialsSection } from '../components/ui/testimonials-with-marquee';
 import { PremiumCarousel } from '../components/ui/premium-carousel';
+import ProofSlideshow from '../components/ui/ProofSlideshow';
 import { Users, UserCheck, MessageSquare, HardDrive } from 'lucide-react';
 import { cn } from '../lib/utils';
 
@@ -224,6 +225,10 @@ export const Home: React.FC = () => {
           />
         </div>
       </div>
+
+
+      {/* Proof Slideshow — Verified Candidate Results */}
+      <ProofSlideshow />
 
       {/* Guarantee Section */}
       <section className="py-24 md:py-32">
