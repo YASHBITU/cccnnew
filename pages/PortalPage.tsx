@@ -649,82 +649,67 @@ export const PortalPage: React.FC = () => {
               {/* Left Column: Video Player & Synopsis */}
               <div className="lg:col-span-2 space-y-6">
                 <div className="bg-slate-950 border border-slate-900 rounded-[2.5rem] overflow-hidden relative shadow-2xl group flex items-center justify-center aspect-video">
-                  {isPlaying ? (
-                    youtubeId ? (
-                      <iframe
-                        src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0`}
-                        className="w-full h-full border-0 absolute inset-0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                      />
-                    ) : vimeoId ? (
-                      <iframe
-                        src={`https://player.vimeo.com/video/${vimeoId}?autoplay=1`}
-                        className="w-full h-full border-0 absolute inset-0"
-                        allow="autoplay; fullscreen; picture-in-picture"
-                        allowFullScreen
-                      />
-                    ) : drivePreviewUrl ? (
-                      <iframe
-                        src={drivePreviewUrl}
-                        className="w-full h-full border-0 absolute inset-0"
-                        allow="autoplay; encrypted-media"
-                        allowFullScreen
-                      />
-                    ) : (
-                      <video
-                        ref={videoRef}
-                        src={activeModule.videoUrl}
-                        className="w-full h-full object-cover absolute inset-0"
-                        onClick={handleVideoPlayToggle}
-                        preload="auto"
-                        autoPlay
-                        controls
-                      />
-                    )
+                  {isPlaying && youtubeId ? (
+                    <iframe
+                      src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0`}
+                      className="w-full h-full border-0 absolute inset-0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  ) : isPlaying && vimeoId ? (
+                    <iframe
+                      src={`https://player.vimeo.com/video/${vimeoId}?autoplay=1`}
+                      className="w-full h-full border-0 absolute inset-0"
+                      allow="autoplay; fullscreen; picture-in-picture"
+                      allowFullScreen
+                    />
                   ) : (
-                    <div 
-                      className="absolute inset-0 w-full h-full flex flex-col justify-between p-6 bg-cover bg-center cursor-pointer"
-                      style={{ 
-                        backgroundImage: `linear-gradient(to top, rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.4)), url(${activeModule.thumbnail})` 
+                    /* Thumbnail card — works for ALL video types including Drive */
+                    <div
+                      className="absolute inset-0 w-full h-full flex flex-col justify-between p-6 bg-cover bg-center"
+                      style={{
+                        backgroundImage: `linear-gradient(to top, rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.4)), url(${activeModule.thumbnail})`
                       }}
-                      onClick={handleVideoPlayToggle}
                     >
                       <div className="self-end px-3 py-1 bg-slate-900/80 backdrop-blur-md rounded-lg text-xs font-bold text-slate-300">
                         {activeModule.duration}
                       </div>
 
-                      <div 
-                        className="flex items-center justify-center flex-grow"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleVideoPlayToggle();
-                        }}
-                      >
-                        <motion.div 
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.95 }}
-                          className="w-20 h-20 bg-[#4285F4] text-white rounded-full flex items-center justify-center shadow-2xl shadow-[#4285F4]/40 z-30 transition-transform duration-300"
-                        >
-                          <Play fill="currentColor" className="ml-1.5" size={28} />
-                        </motion.div>
+                      <div className="flex items-center justify-center flex-grow">
+                        {drivePreviewUrl ? (
+                          /* Google Drive — open in new tab (iframe embedding is blocked by Google) */
+                          <div className="flex flex-col items-center gap-4">
+                            <a
+                              href={activeModule.videoUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="flex items-center gap-3 bg-[#4285F4] hover:bg-[#3b78e7] text-white px-8 py-4 rounded-2xl font-black text-base shadow-2xl shadow-[#4285F4]/40 transition-all active:scale-95"
+                            >
+                              <Play fill="currentColor" size={20} className="ml-1" />
+                              Watch Video
+                            </a>
+                            <span className="text-slate-400 text-xs font-semibold flex items-center gap-1.5">
+                              <ExternalLink size={11} />
+                              Opens in Google Drive
+                            </span>
+                          </div>
+                        ) : (
+                          /* YouTube / Vimeo / direct — inline play */
+                          <motion.div
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={handleVideoPlayToggle}
+                            className="w-20 h-20 bg-[#4285F4] text-white rounded-full flex items-center justify-center shadow-2xl shadow-[#4285F4]/40 z-30 transition-transform duration-300 cursor-pointer"
+                          >
+                            <Play fill="currentColor" className="ml-1.5" size={28} />
+                          </motion.div>
+                        )}
                       </div>
 
                       <div>
                         <span className="text-[10px] font-black uppercase text-[#4285F4] tracking-[0.2em]">Session {activeModule.id}</span>
                         <h2 className="text-xl md:text-2xl font-bold text-white tracking-tight mt-1">{activeModule.title}</h2>
                       </div>
-                    </div>
-                  )}
-
-                  {isPlaying && !youtubeId && !vimeoId && (
-                    <div className="absolute top-4 right-4 z-40 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <button 
-                        onClick={handleVideoPlayToggle}
-                        className="px-4 py-2 bg-slate-900/80 backdrop-blur-md rounded-xl text-xs font-bold text-white hover:bg-slate-800"
-                      >
-                        Pause Video
-                      </button>
                     </div>
                   )}
                 </div>
