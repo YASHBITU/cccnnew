@@ -172,7 +172,7 @@ export const PortalPage: React.FC = () => {
       title: "Session 1: Resume Building",
       duration: "14:22",
       description: "First, watch the complete resume video. Then, edit your resume using the provided Canva template, exactly as explained. Even if it takes extra time, that’s completely okay, just make sure it’s done correctly and properly. Once your resume is ready, send it to CCC. Our team will review it and suggest corrections or improvements. Then you can move to Session 2.",
-      videoUrl: "https://drive.google.com/file/d/1UPpmoOQogW-llI1a9W3Vi9kDKfjoL3GC/view?usp=sharing",
+      videoUrl: "https://drive.google.com/file/d/1yBDK3rI786gpDPGItAvyzhWnDEkYhzka/view?usp=sharing",
       thumbnail: "https://images.unsplash.com/photo-1586281380349-632531db7ed4?q=80&w=640&auto=format&fit=crop"
     },
     {
@@ -180,7 +180,7 @@ export const PortalPage: React.FC = () => {
       title: "Session 2: LinkedIn Profile Optimization",
       duration: "18:45",
       description: "Watch the LinkedIn Profile Optimization video. Apply everything step by step to your LinkedIn profile. Spend sufficient time optimizing your LinkedIn profile properly. Again, quality matters more than speed.",
-      videoUrl: "https://drive.google.com/file/d/1vN9hL1tDbeeOwaCHXsmEC_telozT5FJV/view?usp=sharing",
+      videoUrl: "https://drive.google.com/file/d/1WhLLEuyRe1ablSoBIq4O3Ki83ky4u3yJ/view?usp=sharing",
       thumbnail: "https://images.unsplash.com/photo-1616469829581-73993eb86b02?q=80&w=640&auto=format&fit=crop"
     },
     {
@@ -188,7 +188,7 @@ export const PortalPage: React.FC = () => {
       title: "Session 3: LinkedIn Job Hunt Strategy (Daily Work) 🔥",
       duration: "21:10",
       description: "This is the most important part of CCC. Watch the LinkedIn Job Hunt Strategy video very carefully. Do not skip any minute of the video. At the end of the video there is the most useful thing. This includes the exact steps of Job Hunt strategy and Chrome extension usage. Start applying using this strategy. This is not a one-day task—you need to work on this daily for best results. Once you start getting Interview calls, inform CCC immediately. We’ll guide you on this.",
-      videoUrl: "https://drive.google.com/file/d/1KD0z96AiaAPqs02KAoQ1DE8peDFQeuTu/view?usp=sharing",
+      videoUrl: "https://drive.google.com/file/d/1nW8PFiesCRflOr9TF0EJ8Gz9aZeY_ZT0/view?usp=sharing",
       thumbnail: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=640&auto=format&fit=crop"
     }
   ];
